@@ -79,5 +79,51 @@ In 1NF, repeating groups are removed. Each disease observation and each attachme
 
 **1NF issue:** All values are atomic, but report, hospital, submitter, disease and area information is still repeated.
 
+## 3. Second Normal Form (2NF)
+
+In 2NF, partial dependencies are removed. Report-level attributes are separated from individual disease observations.
+
+### 3.1 ReportHeader_2NF
+
+**Primary Key:** `report_id`
+
+| report_id | submitted_at | hospital_id | hospital_name | registration_no | hospital_address | submitter_id | submitter_name | submitter_email | role | report_status |
+|---|---|---|---|---|---|---|---|---|---|---|
+| REP-11016 | 2026-11-16 10:30 | H-001 | Patna City Hospital | BR-PAT-001 | 12 Fraser Road, Patna | U-014 | Ananya Singh | ananya@hospital.example | REPORTER | SUBMITTED |
+| REP-11017 | 2026-11-16 11:05 | H-002 | Gandhi Memorial Hospital | BR-PAT-002 | 45 Gandhi Maidan Road, Patna | U-022 | Rahul Kumar | rahul@hospital.example | REPORTER | SUBMITTED |
+| REP-11018 | 2026-11-16 12:15 | H-001 | Patna City Hospital | BR-PAT-001 | 12 Fraser Road, Patna | U-014 | Ananya Singh | ananya@hospital.example | REPORTER | SUBMITTED |
+
+### 3.2 ReportLine_2NF
+
+**Primary Key:** `(report_id, line_no)`
+
+**Foreign Key:** `report_id` references `ReportHeader_2NF(report_id)`.
+
+| report_id | line_no | disease_id | disease_name | area_id | area_name | report_date | age_group | classification | case_count |
+|---|---:|---|---|---|---|---|---|---|---:|
+| REP-11016 | 1 | DIS-01 | Dengue | A-012 | Ward 12 | 2026-11-15 | ADULT | SUSPECTED | 18 |
+| REP-11016 | 2 | DIS-01 | Dengue | A-012 | Ward 12 | 2026-11-15 | CHILD | CONFIRMED | 6 |
+| REP-11016 | 3 | DIS-02 | Malaria | A-015 | Ward 15 | 2026-11-15 | ADULT | CONFIRMED | 4 |
+| REP-11016 | 4 | DIS-03 | Chikungunya | A-018 | Ward 18 | 2026-11-15 | ADULT | SUSPECTED | 3 |
+| REP-11017 | 1 | DIS-01 | Dengue | A-012 | Ward 12 | 2026-11-15 | ADULT | CONFIRMED | 11 |
+| REP-11017 | 2 | DIS-03 | Chikungunya | A-018 | Ward 18 | 2026-11-15 | ADULT | SUSPECTED | 3 |
+| REP-11018 | 1 | DIS-01 | Dengue | A-012 | Ward 12 | 2026-11-16 | ADULT | SUSPECTED | 5 |
+| REP-11018 | 2 | DIS-02 | Malaria | A-015 | Ward 15 | 2026-11-16 | ADULT | CONFIRMED | 2 |
+
+### 3.3 ReportAttachment_2NF
+
+**Primary Key:** `attachment_id`
+
+**Foreign Key:** `report_id` references `ReportHeader_2NF(report_id)`.
+
+| attachment_id | report_id | file_name | storage_key | content_type |
+|---|---|---|---|---|
+| ATT-001 | REP-11016 | week46_surveillance.csv | reports/REP-11016/week46.csv | text/csv |
+| ATT-002 | REP-11016 | lab_summary.pdf | reports/REP-11016/lab-summary.pdf | application/pdf |
+| ATT-003 | REP-11017 | week46_hospital2.csv | reports/REP-11017/week46.csv | text/csv |
+| ATT-004 | REP-11018 | week46_update.csv | reports/REP-11018/update.csv | text/csv |
+
+**2NF result:** Report-level information is separated from report-line information. However, hospital, submitter, disease and area descriptions are still repeated. These transitive dependencies are removed in 3NF.
+
 ---
 
