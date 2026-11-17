@@ -1,4 +1,4 @@
-# Database Normalization – VectorWatch
+<<<<<<< HEAD
 
 ## 1. Unnormalized Form (UNF)
 
@@ -126,4 +126,6 @@ In 2NF, partial dependencies are removed. Report-level attributes are separated 
 **2NF result:** Report-level information is separated from report-line information. However, hospital, submitter, disease and area descriptions are still repeated. These transitive dependencies are removed in 3NF.
 
 ---
+=======
+>>>>>>> 63e1c20 (added er diagram in mermaid)
 

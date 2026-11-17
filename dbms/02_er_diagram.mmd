@@ -1,0 +1,280 @@
+erDiagram
+
+    ROLES {
+        string role_id PK
+        string role_name
+        string description
+    }
+
+    USERS {
+        string user_id PK
+        string role_id FK
+        string full_name
+        string email
+        string password_hash
+        string account_status
+    }
+
+    HOSPITALS {
+        string hospital_id PK
+        string registration_no
+        string hospital_name
+        string address
+        string area_id FK
+        string contact_email
+    }
+
+    HOSPITAL_USERS {
+        string hospital_id PK
+        string user_id PK
+        string membership_status
+        datetime joined_at
+    }
+
+    STATES {
+        string state_id PK
+        string state_name
+    }
+
+    DISTRICTS {
+        string district_id PK
+        string district_name
+        string state_id FK
+    }
+
+    AREAS {
+        string area_id PK
+        string area_name
+        string district_id FK
+        string area_type
+        geometry boundary
+    }
+
+    MEDICAL_OFFICES {
+        string medical_office_id PK
+        string office_name
+        string district_id FK
+        string office_contact
+        string office_status
+    }
+
+    MEDICAL_OFFICE_AREAS {
+        string medical_office_id PK
+        string area_id PK
+        datetime valid_from PK
+        datetime valid_to
+    }
+
+    DISEASES {
+        string disease_id PK
+        string disease_name
+        string pathogen_type
+        string vector_type
+    }
+
+    DISEASE_REPORTS {
+        string report_id PK
+        string hospital_id FK
+        string submitted_by FK
+        datetime submitted_at
+        string report_status
+    }
+
+    DISEASE_REPORT_LINES {
+        string report_id PK
+        int line_no PK
+        string disease_id FK
+        string area_id FK
+        date report_date
+        string age_group
+        string case_classification
+        int case_count
+    }
+
+    REPORT_ATTACHMENTS {
+        string attachment_id PK
+        string report_id FK
+        string file_name
+        string storage_key
+        string content_type
+        datetime uploaded_at
+    }
+
+    WEATHER_OBSERVATIONS {
+        string weather_id PK
+        string area_id FK
+        datetime observed_at
+        decimal temperature_c
+        decimal humidity_percent
+        decimal rainfall_mm
+        string source
+    }
+
+    VECTOR_OBSERVATIONS {
+        string vector_id PK
+        string area_id FK
+        datetime observed_at
+        string species
+        int adult_count
+        int larvae_count
+        string sampling_method
+    }
+
+    BREEDING_SITES {
+        string breeding_site_id PK
+        string area_id FK
+        string site_type
+        geometry location
+        string site_status
+        datetime last_inspected_at
+    }
+
+    POPULATION_ESTIMATES {
+        string population_id PK
+        string area_id FK
+        int reference_year
+        int population_count
+        string source
+    }
+
+    ML_MODELS {
+        string model_id PK
+        string model_name
+        string version
+        string algorithm
+        datetime trained_at
+        string artifact_uri
+    }
+
+    RISK_PREDICTIONS {
+        string prediction_id PK
+        string area_id FK
+        string disease_id FK
+        string model_id FK
+        datetime generated_at
+        date forecast_start
+        date forecast_end
+        decimal risk_score
+        string risk_level
+    }
+
+    PREDICTION_FEATURES {
+        string prediction_id PK
+        string feature_name PK
+        decimal feature_value
+        decimal contribution_value
+    }
+
+    HOTSPOTS {
+        string hotspot_id PK
+        string area_id FK
+        string disease_id FK
+        datetime detected_at
+        string detection_method
+        decimal intensity
+    }
+
+    ALERTS {
+        string alert_id PK
+        string area_id FK
+        string disease_id FK
+        string prediction_id FK
+        datetime created_at
+        string severity
+        string status
+    }
+
+    INTERVENTIONS {
+        string intervention_id PK
+        string area_id FK
+        string medical_office_id FK
+        string intervention_type
+        string priority
+        string status
+        datetime created_at
+    }
+
+    FIELD_TEAMS {
+        string team_id PK
+        string medical_office_id FK
+        string team_name
+        int members_count
+    }
+
+    INTERVENTION_ASSIGNMENTS {
+        string intervention_id PK
+        string team_id PK
+        datetime assigned_at
+    }
+
+    INTERVENTION_REPORTS {
+        string intervention_report_id PK
+        string intervention_id FK
+        string submitted_by FK
+        string outcome
+        string notes
+        datetime completed_at
+    }
+
+    PUBLIC_NOTIFICATIONS {
+        string notification_id PK
+        string area_id FK
+        string disease_id FK
+        string title
+        datetime published_at
+        datetime expires_at
+    }
+
+    PREVENTION_GUIDELINES {
+        string guideline_id PK
+        string disease_id FK
+        string title
+        string source_name
+        datetime updated_at
+    }
+
+    ROLES ||--o{ USERS : assigns
+    USERS ||--o{ HOSPITAL_USERS : has_membership
+    HOSPITALS ||--o{ HOSPITAL_USERS : has_members
+    AREAS ||--o{ HOSPITALS : located_in
+
+    STATES ||--o{ DISTRICTS : contains
+    DISTRICTS ||--o{ AREAS : contains
+    DISTRICTS ||--o{ MEDICAL_OFFICES : served_by
+    MEDICAL_OFFICES ||--o{ MEDICAL_OFFICE_AREAS : jurisdiction_history
+    AREAS ||--o{ MEDICAL_OFFICE_AREAS : assigned_to
+
+    HOSPITALS ||--o{ DISEASE_REPORTS : submits
+    USERS ||--o{ DISEASE_REPORTS : submitted_by
+    DISEASE_REPORTS ||--|{ DISEASE_REPORT_LINES : contains
+    DISEASES ||--o{ DISEASE_REPORT_LINES : classified_as
+    AREAS ||--o{ DISEASE_REPORT_LINES : observed_in
+    DISEASE_REPORTS ||--o{ REPORT_ATTACHMENTS : has
+
+    AREAS ||--o{ WEATHER_OBSERVATIONS : records
+    AREAS ||--o{ VECTOR_OBSERVATIONS : records
+    AREAS ||--o{ BREEDING_SITES : contains
+    AREAS ||--o{ POPULATION_ESTIMATES : estimated_for
+
+    ML_MODELS ||--o{ RISK_PREDICTIONS : generates
+    AREAS ||--o{ RISK_PREDICTIONS : predicted_for
+    DISEASES ||--o{ RISK_PREDICTIONS : predicts
+    RISK_PREDICTIONS ||--o{ PREDICTION_FEATURES : explained_by
+
+    AREAS ||--o{ HOTSPOTS : identifies
+    DISEASES ||--o{ HOTSPOTS : concerns
+    AREAS ||--o{ ALERTS : raised_for
+    DISEASES ||--o{ ALERTS : concerns
+    RISK_PREDICTIONS ||--o{ ALERTS : triggers
+
+    AREAS ||--o{ INTERVENTIONS : receives
+    MEDICAL_OFFICES ||--o{ INTERVENTIONS : manages
+    MEDICAL_OFFICES ||--o{ FIELD_TEAMS : operates
+    INTERVENTIONS ||--o{ INTERVENTION_ASSIGNMENTS : assigned_to
+    FIELD_TEAMS ||--o{ INTERVENTION_ASSIGNMENTS : works_on
+    INTERVENTIONS ||--o{ INTERVENTION_REPORTS : documented_by
+    USERS ||--o{ INTERVENTION_REPORTS : submitted_by
+
+    AREAS ||--o{ PUBLIC_NOTIFICATIONS : targeted_to
+    DISEASES ||--o{ PUBLIC_NOTIFICATIONS : about
+    DISEASES ||--o{ PREVENTION_GUIDELINES : has_guidance
