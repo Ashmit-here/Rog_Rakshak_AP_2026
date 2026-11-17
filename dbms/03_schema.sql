@@ -15,10 +15,12 @@ CREATE TABLE users (
 
 CREATE TABLE hospitals (
     hospital_id text PRIMARY KEY,
-    registration_no text,
+    registration_no text UNIQUE,
     hospital_name text NOT NULL,
     address text,
-    contact_email text
+    area_id text REFERENCES areas(area_id),
+    contact_email text,
+    hospital_status text
 );
 
 CREATE TABLE states (
