@@ -1,3 +1,4 @@
+
 CREATE TABLE roles (
     role_id text PRIMARY KEY,
     role_name text NOT NULL,
@@ -11,16 +12,6 @@ CREATE TABLE users (
     email text NOT NULL,
     password_hash text,
     account_status text
-);
-
-CREATE TABLE hospitals (
-    hospital_id text PRIMARY KEY,
-    registration_no text UNIQUE,
-    hospital_name text NOT NULL,
-    address text,
-    area_id text REFERENCES areas(area_id),
-    contact_email text,
-    hospital_status text
 );
 
 CREATE TABLE states (
@@ -40,6 +31,17 @@ CREATE TABLE areas (
     district_id text NOT NULL REFERENCES districts(district_id),
     area_type text,
     boundary text
+);
+
+-- Hospitals (created after areas because of the foreign key).
+CREATE TABLE hospitals (
+    hospital_id text PRIMARY KEY,
+    registration_no text UNIQUE,
+    hospital_name text NOT NULL,
+    address text,
+    area_id text REFERENCES areas(area_id),
+    contact_email text,
+    hospital_status text
 );
 
 CREATE TABLE diseases (
