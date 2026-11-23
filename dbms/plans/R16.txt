@@ -1,0 +1,60 @@
+Execution plans for R16
+Database: Rog_AP_2026
+Executions: 3
+
+================================================================================
+RUN 1
+================================================================================
+
+Sort  (cost=15.88..15.89 rows=3 width=58) (actual time=0.027..0.028 rows=3.00 loops=1)
+  Output: prediction_id, feature_name, feature_value, contribution_value, (abs(contribution_value))
+  Sort Key: (abs(pf.contribution_value)) DESC NULLS LAST
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=7
+  ->  Index Scan using prediction_features_pkey on public.prediction_features pf  (cost=0.41..15.85 rows=3 width=58) (actual time=0.020..0.020 rows=3.00 loops=1)
+        Output: prediction_id, feature_name, feature_value, contribution_value, abs(contribution_value)
+        Index Cond: (pf.prediction_id = 'RP-001'::text)
+        Index Searches: 1
+        Buffers: shared hit=4
+Planning:
+  Buffers: shared hit=93
+Planning Time: 0.369 ms
+Execution Time: 0.043 ms
+
+================================================================================
+RUN 2
+================================================================================
+
+Sort  (cost=15.88..15.89 rows=3 width=58) (actual time=0.018..0.018 rows=3.00 loops=1)
+  Output: prediction_id, feature_name, feature_value, contribution_value, (abs(contribution_value))
+  Sort Key: (abs(pf.contribution_value)) DESC NULLS LAST
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=7
+  ->  Index Scan using prediction_features_pkey on public.prediction_features pf  (cost=0.41..15.85 rows=3 width=58) (actual time=0.010..0.011 rows=3.00 loops=1)
+        Output: prediction_id, feature_name, feature_value, contribution_value, abs(contribution_value)
+        Index Cond: (pf.prediction_id = 'RP-001'::text)
+        Index Searches: 1
+        Buffers: shared hit=4
+Planning:
+  Buffers: shared hit=93
+Planning Time: 0.140 ms
+Execution Time: 0.032 ms
+
+================================================================================
+RUN 3
+================================================================================
+
+Sort  (cost=15.88..15.89 rows=3 width=58) (actual time=0.019..0.020 rows=3.00 loops=1)
+  Output: prediction_id, feature_name, feature_value, contribution_value, (abs(contribution_value))
+  Sort Key: (abs(pf.contribution_value)) DESC NULLS LAST
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=7
+  ->  Index Scan using prediction_features_pkey on public.prediction_features pf  (cost=0.41..15.85 rows=3 width=58) (actual time=0.012..0.012 rows=3.00 loops=1)
+        Output: prediction_id, feature_name, feature_value, contribution_value, abs(contribution_value)
+        Index Cond: (pf.prediction_id = 'RP-001'::text)
+        Index Searches: 1
+        Buffers: shared hit=4
+Planning:
+  Buffers: shared hit=93
+Planning Time: 0.148 ms
+Execution Time: 0.035 ms

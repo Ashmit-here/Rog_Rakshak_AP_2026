@@ -1,0 +1,99 @@
+Execution plans for R10
+Database: Rog_AP_2026
+Executions: 3
+
+================================================================================
+RUN 1
+================================================================================
+
+Unique  (cost=930.00..980.00 rows=100 width=76) (actual time=3.782..4.178 rows=100.00 loops=1)
+  Output: a.area_id, a.area_name, wo.observed_at, wo.temperature_c, wo.humidity_percent, wo.rainfall_mm, wo.source
+  Buffers: shared hit=142
+  ->  Sort  (cost=930.00..955.00 rows=10000 width=76) (actual time=3.782..3.949 rows=10000.00 loops=1)
+        Output: a.area_id, a.area_name, wo.observed_at, wo.temperature_c, wo.humidity_percent, wo.rainfall_mm, wo.source
+        Sort Key: a.area_id, wo.observed_at DESC
+        Sort Method: quicksort  Memory: 1400kB
+        Buffers: shared hit=142
+        ->  Hash Join  (cost=4.25..265.61 rows=10000 width=76) (actual time=0.021..1.248 rows=10000.00 loops=1)
+              Output: a.area_id, a.area_name, wo.observed_at, wo.temperature_c, wo.humidity_percent, wo.rainfall_mm, wo.source
+              Inner Unique: true
+              Hash Cond: (wo.area_id = a.area_id)
+              Buffers: shared hit=136
+              ->  Seq Scan on public.weather_observations wo  (cost=0.00..234.00 rows=10000 width=59) (actual time=0.004..0.467 rows=10000.00 loops=1)
+                    Output: wo.weather_id, wo.area_id, wo.observed_at, wo.temperature_c, wo.humidity_percent, wo.rainfall_mm, wo.source
+                    Buffers: shared hit=134
+              ->  Hash  (cost=3.00..3.00 rows=100 width=27) (actual time=0.013..0.013 rows=100.00 loops=1)
+                    Output: a.area_id, a.area_name
+                    Buckets: 1024  Batches: 1  Memory Usage: 14kB
+                    Buffers: shared hit=2
+                    ->  Seq Scan on public.areas a  (cost=0.00..3.00 rows=100 width=27) (actual time=0.003..0.006 rows=100.00 loops=1)
+                          Output: a.area_id, a.area_name
+                          Buffers: shared hit=2
+Planning:
+  Buffers: shared hit=140
+Planning Time: 0.496 ms
+Execution Time: 4.208 ms
+
+================================================================================
+RUN 2
+================================================================================
+
+Unique  (cost=930.00..980.00 rows=100 width=76) (actual time=3.715..4.124 rows=100.00 loops=1)
+  Output: a.area_id, a.area_name, wo.observed_at, wo.temperature_c, wo.humidity_percent, wo.rainfall_mm, wo.source
+  Buffers: shared hit=142
+  ->  Sort  (cost=930.00..955.00 rows=10000 width=76) (actual time=3.715..3.885 rows=10000.00 loops=1)
+        Output: a.area_id, a.area_name, wo.observed_at, wo.temperature_c, wo.humidity_percent, wo.rainfall_mm, wo.source
+        Sort Key: a.area_id, wo.observed_at DESC
+        Sort Method: quicksort  Memory: 1400kB
+        Buffers: shared hit=142
+        ->  Hash Join  (cost=4.25..265.61 rows=10000 width=76) (actual time=0.020..1.157 rows=10000.00 loops=1)
+              Output: a.area_id, a.area_name, wo.observed_at, wo.temperature_c, wo.humidity_percent, wo.rainfall_mm, wo.source
+              Inner Unique: true
+              Hash Cond: (wo.area_id = a.area_id)
+              Buffers: shared hit=136
+              ->  Seq Scan on public.weather_observations wo  (cost=0.00..234.00 rows=10000 width=59) (actual time=0.003..0.314 rows=10000.00 loops=1)
+                    Output: wo.weather_id, wo.area_id, wo.observed_at, wo.temperature_c, wo.humidity_percent, wo.rainfall_mm, wo.source
+                    Buffers: shared hit=134
+              ->  Hash  (cost=3.00..3.00 rows=100 width=27) (actual time=0.013..0.013 rows=100.00 loops=1)
+                    Output: a.area_id, a.area_name
+                    Buckets: 1024  Batches: 1  Memory Usage: 14kB
+                    Buffers: shared hit=2
+                    ->  Seq Scan on public.areas a  (cost=0.00..3.00 rows=100 width=27) (actual time=0.003..0.006 rows=100.00 loops=1)
+                          Output: a.area_id, a.area_name
+                          Buffers: shared hit=2
+Planning:
+  Buffers: shared hit=140
+Planning Time: 0.261 ms
+Execution Time: 4.149 ms
+
+================================================================================
+RUN 3
+================================================================================
+
+Unique  (cost=930.00..980.00 rows=100 width=76) (actual time=3.800..4.191 rows=100.00 loops=1)
+  Output: a.area_id, a.area_name, wo.observed_at, wo.temperature_c, wo.humidity_percent, wo.rainfall_mm, wo.source
+  Buffers: shared hit=142
+  ->  Sort  (cost=930.00..955.00 rows=10000 width=76) (actual time=3.800..3.964 rows=10000.00 loops=1)
+        Output: a.area_id, a.area_name, wo.observed_at, wo.temperature_c, wo.humidity_percent, wo.rainfall_mm, wo.source
+        Sort Key: a.area_id, wo.observed_at DESC
+        Sort Method: quicksort  Memory: 1400kB
+        Buffers: shared hit=142
+        ->  Hash Join  (cost=4.25..265.61 rows=10000 width=76) (actual time=0.020..1.130 rows=10000.00 loops=1)
+              Output: a.area_id, a.area_name, wo.observed_at, wo.temperature_c, wo.humidity_percent, wo.rainfall_mm, wo.source
+              Inner Unique: true
+              Hash Cond: (wo.area_id = a.area_id)
+              Buffers: shared hit=136
+              ->  Seq Scan on public.weather_observations wo  (cost=0.00..234.00 rows=10000 width=59) (actual time=0.003..0.313 rows=10000.00 loops=1)
+                    Output: wo.weather_id, wo.area_id, wo.observed_at, wo.temperature_c, wo.humidity_percent, wo.rainfall_mm, wo.source
+                    Buffers: shared hit=134
+              ->  Hash  (cost=3.00..3.00 rows=100 width=27) (actual time=0.013..0.013 rows=100.00 loops=1)
+                    Output: a.area_id, a.area_name
+                    Buckets: 1024  Batches: 1  Memory Usage: 14kB
+                    Buffers: shared hit=2
+                    ->  Seq Scan on public.areas a  (cost=0.00..3.00 rows=100 width=27) (actual time=0.002..0.006 rows=100.00 loops=1)
+                          Output: a.area_id, a.area_name
+                          Buffers: shared hit=2
+Planning:
+  Buffers: shared hit=140
+Planning Time: 0.268 ms
+Execution Time: 4.215 ms

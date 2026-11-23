@@ -1,0 +1,126 @@
+Execution plans for R4
+Database: Rog_AP_2026
+Executions: 3
+
+================================================================================
+RUN 1
+================================================================================
+
+Sort  (cost=446.46..458.96 rows=5000 width=65) (actual time=1.604..1.699 rows=5000.00 loops=1)
+  Output: dr.report_id, dr.submitted_at, h.hospital_name, u.full_name, dr.report_status
+  Sort Key: dr.submitted_at DESC
+  Sort Method: quicksort  Memory: 651kB
+  Buffers: shared hit=59
+  ->  Hash Join  (cost=10.62..139.27 rows=5000 width=65) (actual time=0.047..1.134 rows=5000.00 loops=1)
+        Output: dr.report_id, dr.submitted_at, h.hospital_name, u.full_name, dr.report_status
+        Inner Unique: true
+        Hash Cond: (dr.submitted_by = u.user_id)
+        Buffers: shared hit=56
+        ->  Hash Join  (cost=3.12..118.36 rows=5000 width=56) (actual time=0.019..0.725 rows=5000.00 loops=1)
+              Output: dr.report_id, dr.submitted_at, dr.report_status, dr.submitted_by, h.hospital_name
+              Inner Unique: true
+              Hash Cond: (dr.hospital_id = h.hospital_id)
+              Buffers: shared hit=53
+              ->  Seq Scan on public.disease_reports dr  (cost=0.00..101.00 rows=5000 width=44) (actual time=0.003..0.298 rows=5000.00 loops=1)
+                    Output: dr.report_id, dr.hospital_id, dr.submitted_by, dr.submitted_at, dr.report_status
+                    Buffers: shared hit=51
+              ->  Hash  (cost=2.50..2.50 rows=50 width=30) (actual time=0.011..0.011 rows=50.00 loops=1)
+                    Output: h.hospital_name, h.hospital_id
+                    Buckets: 1024  Batches: 1  Memory Usage: 12kB
+                    Buffers: shared hit=2
+                    ->  Seq Scan on public.hospitals h  (cost=0.00..2.50 rows=50 width=30) (actual time=0.002..0.005 rows=50.00 loops=1)
+                          Output: h.hospital_name, h.hospital_id
+                          Buffers: shared hit=2
+        ->  Hash  (cost=5.00..5.00 rows=200 width=27) (actual time=0.025..0.025 rows=200.00 loops=1)
+              Output: u.full_name, u.user_id
+              Buckets: 1024  Batches: 1  Memory Usage: 20kB
+              Buffers: shared hit=3
+              ->  Seq Scan on public.users u  (cost=0.00..5.00 rows=200 width=27) (actual time=0.004..0.014 rows=200.00 loops=1)
+                    Output: u.full_name, u.user_id
+                    Buffers: shared hit=3
+Planning:
+  Buffers: shared hit=263
+Planning Time: 0.475 ms
+Execution Time: 1.820 ms
+
+================================================================================
+RUN 2
+================================================================================
+
+Sort  (cost=446.46..458.96 rows=5000 width=65) (actual time=1.450..1.543 rows=5000.00 loops=1)
+  Output: dr.report_id, dr.submitted_at, h.hospital_name, u.full_name, dr.report_status
+  Sort Key: dr.submitted_at DESC
+  Sort Method: quicksort  Memory: 651kB
+  Buffers: shared hit=59
+  ->  Hash Join  (cost=10.62..139.27 rows=5000 width=65) (actual time=0.047..0.990 rows=5000.00 loops=1)
+        Output: dr.report_id, dr.submitted_at, h.hospital_name, u.full_name, dr.report_status
+        Inner Unique: true
+        Hash Cond: (dr.submitted_by = u.user_id)
+        Buffers: shared hit=56
+        ->  Hash Join  (cost=3.12..118.36 rows=5000 width=56) (actual time=0.018..0.606 rows=5000.00 loops=1)
+              Output: dr.report_id, dr.submitted_at, dr.report_status, dr.submitted_by, h.hospital_name
+              Inner Unique: true
+              Hash Cond: (dr.hospital_id = h.hospital_id)
+              Buffers: shared hit=53
+              ->  Seq Scan on public.disease_reports dr  (cost=0.00..101.00 rows=5000 width=44) (actual time=0.003..0.201 rows=5000.00 loops=1)
+                    Output: dr.report_id, dr.hospital_id, dr.submitted_by, dr.submitted_at, dr.report_status
+                    Buffers: shared hit=51
+              ->  Hash  (cost=2.50..2.50 rows=50 width=30) (actual time=0.011..0.011 rows=50.00 loops=1)
+                    Output: h.hospital_name, h.hospital_id
+                    Buckets: 1024  Batches: 1  Memory Usage: 12kB
+                    Buffers: shared hit=2
+                    ->  Seq Scan on public.hospitals h  (cost=0.00..2.50 rows=50 width=30) (actual time=0.002..0.004 rows=50.00 loops=1)
+                          Output: h.hospital_name, h.hospital_id
+                          Buffers: shared hit=2
+        ->  Hash  (cost=5.00..5.00 rows=200 width=27) (actual time=0.025..0.025 rows=200.00 loops=1)
+              Output: u.full_name, u.user_id
+              Buckets: 1024  Batches: 1  Memory Usage: 20kB
+              Buffers: shared hit=3
+              ->  Seq Scan on public.users u  (cost=0.00..5.00 rows=200 width=27) (actual time=0.005..0.015 rows=200.00 loops=1)
+                    Output: u.full_name, u.user_id
+                    Buffers: shared hit=3
+Planning:
+  Buffers: shared hit=263
+Planning Time: 0.448 ms
+Execution Time: 1.658 ms
+
+================================================================================
+RUN 3
+================================================================================
+
+Sort  (cost=446.46..458.96 rows=5000 width=65) (actual time=1.394..1.483 rows=5000.00 loops=1)
+  Output: dr.report_id, dr.submitted_at, h.hospital_name, u.full_name, dr.report_status
+  Sort Key: dr.submitted_at DESC
+  Sort Method: quicksort  Memory: 651kB
+  Buffers: shared hit=59
+  ->  Hash Join  (cost=10.62..139.27 rows=5000 width=65) (actual time=0.073..0.967 rows=5000.00 loops=1)
+        Output: dr.report_id, dr.submitted_at, h.hospital_name, u.full_name, dr.report_status
+        Inner Unique: true
+        Hash Cond: (dr.submitted_by = u.user_id)
+        Buffers: shared hit=56
+        ->  Hash Join  (cost=3.12..118.36 rows=5000 width=56) (actual time=0.047..0.594 rows=5000.00 loops=1)
+              Output: dr.report_id, dr.submitted_at, dr.report_status, dr.submitted_by, h.hospital_name
+              Inner Unique: true
+              Hash Cond: (dr.hospital_id = h.hospital_id)
+              Buffers: shared hit=53
+              ->  Seq Scan on public.disease_reports dr  (cost=0.00..101.00 rows=5000 width=44) (actual time=0.003..0.172 rows=5000.00 loops=1)
+                    Output: dr.report_id, dr.hospital_id, dr.submitted_by, dr.submitted_at, dr.report_status
+                    Buffers: shared hit=51
+              ->  Hash  (cost=2.50..2.50 rows=50 width=30) (actual time=0.010..0.010 rows=50.00 loops=1)
+                    Output: h.hospital_name, h.hospital_id
+                    Buckets: 1024  Batches: 1  Memory Usage: 12kB
+                    Buffers: shared hit=2
+                    ->  Seq Scan on public.hospitals h  (cost=0.00..2.50 rows=50 width=30) (actual time=0.002..0.004 rows=50.00 loops=1)
+                          Output: h.hospital_name, h.hospital_id
+                          Buffers: shared hit=2
+        ->  Hash  (cost=5.00..5.00 rows=200 width=27) (actual time=0.023..0.023 rows=200.00 loops=1)
+              Output: u.full_name, u.user_id
+              Buckets: 1024  Batches: 1  Memory Usage: 20kB
+              Buffers: shared hit=3
+              ->  Seq Scan on public.users u  (cost=0.00..5.00 rows=200 width=27) (actual time=0.004..0.013 rows=200.00 loops=1)
+                    Output: u.full_name, u.user_id
+                    Buffers: shared hit=3
+Planning:
+  Buffers: shared hit=263
+Planning Time: 0.411 ms
+Execution Time: 1.595 ms

@@ -1,0 +1,171 @@
+Execution plans for R14
+Database: Rog_AP_2026
+Executions: 3
+
+================================================================================
+RUN 1
+================================================================================
+
+Unique  (cost=2143.98..2293.98 rows=800 width=106) (actual time=18.659..20.070 rows=800.00 loops=1)
+  Output: a.area_name, dis.disease_name, rp.generated_at, rp.forecast_start, rp.forecast_end, rp.risk_score, rp.risk_level, m.model_name, m.version, rp.area_id, rp.disease_id
+  Buffers: shared hit=257
+  ->  Sort  (cost=2143.98..2193.98 rows=20000 width=106) (actual time=18.659..19.011 rows=20000.00 loops=1)
+        Output: a.area_name, dis.disease_name, rp.generated_at, rp.forecast_start, rp.forecast_end, rp.risk_score, rp.risk_level, m.model_name, m.version, rp.area_id, rp.disease_id
+        Sort Key: rp.area_id, rp.disease_id, rp.generated_at DESC
+        Sort Method: quicksort  Memory: 3147kB
+        Buffers: shared hit=257
+        ->  Hash Join  (cost=6.50..715.21 rows=20000 width=106) (actual time=0.032..5.480 rows=20000.00 loops=1)
+              Output: a.area_name, dis.disease_name, rp.generated_at, rp.forecast_start, rp.forecast_end, rp.risk_score, rp.risk_level, m.model_name, m.version, rp.area_id, rp.disease_id
+              Inner Unique: true
+              Hash Cond: (rp.model_id = m.model_id)
+              Buffers: shared hit=251
+              ->  Hash Join  (cost=5.43..587.47 rows=20000 width=88) (actual time=0.024..4.057 rows=20000.00 loops=1)
+                    Output: rp.generated_at, rp.forecast_start, rp.forecast_end, rp.risk_score, rp.risk_level, rp.area_id, rp.disease_id, rp.model_id, a.area_name, dis.disease_name
+                    Inner Unique: true
+                    Hash Cond: (rp.disease_id = dis.disease_id)
+                    Buffers: shared hit=250
+                    ->  Hash Join  (cost=4.25..505.98 rows=20000 width=68) (actual time=0.018..2.641 rows=20000.00 loops=1)
+                          Output: rp.generated_at, rp.forecast_start, rp.forecast_end, rp.risk_score, rp.risk_level, rp.area_id, rp.disease_id, rp.model_id, a.area_name
+                          Inner Unique: true
+                          Hash Cond: (rp.area_id = a.area_id)
+                          Buffers: shared hit=249
+                          ->  Seq Scan on public.risk_predictions rp  (cost=0.00..447.00 rows=20000 width=51) (actual time=0.005..0.873 rows=20000.00 loops=1)
+                                Output: rp.prediction_id, rp.area_id, rp.disease_id, rp.model_id, rp.generated_at, rp.forecast_start, rp.forecast_end, rp.risk_score, rp.risk_level
+                                Buffers: shared hit=247
+                          ->  Hash  (cost=3.00..3.00 rows=100 width=27) (actual time=0.010..0.010 rows=100.00 loops=1)
+                                Output: a.area_name, a.area_id
+                                Buckets: 1024  Batches: 1  Memory Usage: 14kB
+                                Buffers: shared hit=2
+                                ->  Seq Scan on public.areas a  (cost=0.00..3.00 rows=100 width=27) (actual time=0.001..0.005 rows=100.00 loops=1)
+                                      Output: a.area_name, a.area_id
+                                      Buffers: shared hit=2
+                    ->  Hash  (cost=1.08..1.08 rows=8 width=27) (actual time=0.004..0.004 rows=8.00 loops=1)
+                          Output: dis.disease_name, dis.disease_id
+                          Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                          Buffers: shared hit=1
+                          ->  Seq Scan on public.diseases dis  (cost=0.00..1.08 rows=8 width=27) (actual time=0.002..0.002 rows=8.00 loops=1)
+                                Output: dis.disease_name, dis.disease_id
+                                Buffers: shared hit=1
+              ->  Hash  (cost=1.03..1.03 rows=3 width=36) (actual time=0.005..0.005 rows=3.00 loops=1)
+                    Output: m.model_name, m.version, m.model_id
+                    Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                    Buffers: shared hit=1
+                    ->  Seq Scan on public.ml_models m  (cost=0.00..1.03 rows=3 width=36) (actual time=0.002..0.002 rows=3.00 loops=1)
+                          Output: m.model_name, m.version, m.model_id
+                          Buffers: shared hit=1
+Planning:
+  Buffers: shared hit=230
+Planning Time: 0.708 ms
+Execution Time: 20.134 ms
+
+================================================================================
+RUN 2
+================================================================================
+
+Unique  (cost=2143.98..2293.98 rows=800 width=106) (actual time=17.566..18.858 rows=800.00 loops=1)
+  Output: a.area_name, dis.disease_name, rp.generated_at, rp.forecast_start, rp.forecast_end, rp.risk_score, rp.risk_level, m.model_name, m.version, rp.area_id, rp.disease_id
+  Buffers: shared hit=257
+  ->  Sort  (cost=2143.98..2193.98 rows=20000 width=106) (actual time=17.566..17.922 rows=20000.00 loops=1)
+        Output: a.area_name, dis.disease_name, rp.generated_at, rp.forecast_start, rp.forecast_end, rp.risk_score, rp.risk_level, m.model_name, m.version, rp.area_id, rp.disease_id
+        Sort Key: rp.area_id, rp.disease_id, rp.generated_at DESC
+        Sort Method: quicksort  Memory: 3147kB
+        Buffers: shared hit=257
+        ->  Hash Join  (cost=6.50..715.21 rows=20000 width=106) (actual time=0.029..4.985 rows=20000.00 loops=1)
+              Output: a.area_name, dis.disease_name, rp.generated_at, rp.forecast_start, rp.forecast_end, rp.risk_score, rp.risk_level, m.model_name, m.version, rp.area_id, rp.disease_id
+              Inner Unique: true
+              Hash Cond: (rp.model_id = m.model_id)
+              Buffers: shared hit=251
+              ->  Hash Join  (cost=5.43..587.47 rows=20000 width=88) (actual time=0.021..3.591 rows=20000.00 loops=1)
+                    Output: rp.generated_at, rp.forecast_start, rp.forecast_end, rp.risk_score, rp.risk_level, rp.area_id, rp.disease_id, rp.model_id, a.area_name, dis.disease_name
+                    Inner Unique: true
+                    Hash Cond: (rp.disease_id = dis.disease_id)
+                    Buffers: shared hit=250
+                    ->  Hash Join  (cost=4.25..505.98 rows=20000 width=68) (actual time=0.015..2.232 rows=20000.00 loops=1)
+                          Output: rp.generated_at, rp.forecast_start, rp.forecast_end, rp.risk_score, rp.risk_level, rp.area_id, rp.disease_id, rp.model_id, a.area_name
+                          Inner Unique: true
+                          Hash Cond: (rp.area_id = a.area_id)
+                          Buffers: shared hit=249
+                          ->  Seq Scan on public.risk_predictions rp  (cost=0.00..447.00 rows=20000 width=51) (actual time=0.002..0.586 rows=20000.00 loops=1)
+                                Output: rp.prediction_id, rp.area_id, rp.disease_id, rp.model_id, rp.generated_at, rp.forecast_start, rp.forecast_end, rp.risk_score, rp.risk_level
+                                Buffers: shared hit=247
+                          ->  Hash  (cost=3.00..3.00 rows=100 width=27) (actual time=0.010..0.010 rows=100.00 loops=1)
+                                Output: a.area_name, a.area_id
+                                Buckets: 1024  Batches: 1  Memory Usage: 14kB
+                                Buffers: shared hit=2
+                                ->  Seq Scan on public.areas a  (cost=0.00..3.00 rows=100 width=27) (actual time=0.001..0.005 rows=100.00 loops=1)
+                                      Output: a.area_name, a.area_id
+                                      Buffers: shared hit=2
+                    ->  Hash  (cost=1.08..1.08 rows=8 width=27) (actual time=0.004..0.004 rows=8.00 loops=1)
+                          Output: dis.disease_name, dis.disease_id
+                          Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                          Buffers: shared hit=1
+                          ->  Seq Scan on public.diseases dis  (cost=0.00..1.08 rows=8 width=27) (actual time=0.002..0.002 rows=8.00 loops=1)
+                                Output: dis.disease_name, dis.disease_id
+                                Buffers: shared hit=1
+              ->  Hash  (cost=1.03..1.03 rows=3 width=36) (actual time=0.005..0.005 rows=3.00 loops=1)
+                    Output: m.model_name, m.version, m.model_id
+                    Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                    Buffers: shared hit=1
+                    ->  Seq Scan on public.ml_models m  (cost=0.00..1.03 rows=3 width=36) (actual time=0.002..0.002 rows=3.00 loops=1)
+                          Output: m.model_name, m.version, m.model_id
+                          Buffers: shared hit=1
+Planning:
+  Buffers: shared hit=230
+Planning Time: 0.451 ms
+Execution Time: 18.920 ms
+
+================================================================================
+RUN 3
+================================================================================
+
+Unique  (cost=2143.98..2293.98 rows=800 width=106) (actual time=18.681..20.058 rows=800.00 loops=1)
+  Output: a.area_name, dis.disease_name, rp.generated_at, rp.forecast_start, rp.forecast_end, rp.risk_score, rp.risk_level, m.model_name, m.version, rp.area_id, rp.disease_id
+  Buffers: shared hit=257
+  ->  Sort  (cost=2143.98..2193.98 rows=20000 width=106) (actual time=18.681..19.022 rows=20000.00 loops=1)
+        Output: a.area_name, dis.disease_name, rp.generated_at, rp.forecast_start, rp.forecast_end, rp.risk_score, rp.risk_level, m.model_name, m.version, rp.area_id, rp.disease_id
+        Sort Key: rp.area_id, rp.disease_id, rp.generated_at DESC
+        Sort Method: quicksort  Memory: 3147kB
+        Buffers: shared hit=257
+        ->  Hash Join  (cost=6.50..715.21 rows=20000 width=106) (actual time=0.031..5.159 rows=20000.00 loops=1)
+              Output: a.area_name, dis.disease_name, rp.generated_at, rp.forecast_start, rp.forecast_end, rp.risk_score, rp.risk_level, m.model_name, m.version, rp.area_id, rp.disease_id
+              Inner Unique: true
+              Hash Cond: (rp.model_id = m.model_id)
+              Buffers: shared hit=251
+              ->  Hash Join  (cost=5.43..587.47 rows=20000 width=88) (actual time=0.022..3.728 rows=20000.00 loops=1)
+                    Output: rp.generated_at, rp.forecast_start, rp.forecast_end, rp.risk_score, rp.risk_level, rp.area_id, rp.disease_id, rp.model_id, a.area_name, dis.disease_name
+                    Inner Unique: true
+                    Hash Cond: (rp.disease_id = dis.disease_id)
+                    Buffers: shared hit=250
+                    ->  Hash Join  (cost=4.25..505.98 rows=20000 width=68) (actual time=0.016..2.311 rows=20000.00 loops=1)
+                          Output: rp.generated_at, rp.forecast_start, rp.forecast_end, rp.risk_score, rp.risk_level, rp.area_id, rp.disease_id, rp.model_id, a.area_name
+                          Inner Unique: true
+                          Hash Cond: (rp.area_id = a.area_id)
+                          Buffers: shared hit=249
+                          ->  Seq Scan on public.risk_predictions rp  (cost=0.00..447.00 rows=20000 width=51) (actual time=0.002..0.568 rows=20000.00 loops=1)
+                                Output: rp.prediction_id, rp.area_id, rp.disease_id, rp.model_id, rp.generated_at, rp.forecast_start, rp.forecast_end, rp.risk_score, rp.risk_level
+                                Buffers: shared hit=247
+                          ->  Hash  (cost=3.00..3.00 rows=100 width=27) (actual time=0.010..0.010 rows=100.00 loops=1)
+                                Output: a.area_name, a.area_id
+                                Buckets: 1024  Batches: 1  Memory Usage: 14kB
+                                Buffers: shared hit=2
+                                ->  Seq Scan on public.areas a  (cost=0.00..3.00 rows=100 width=27) (actual time=0.001..0.004 rows=100.00 loops=1)
+                                      Output: a.area_name, a.area_id
+                                      Buffers: shared hit=2
+                    ->  Hash  (cost=1.08..1.08 rows=8 width=27) (actual time=0.004..0.004 rows=8.00 loops=1)
+                          Output: dis.disease_name, dis.disease_id
+                          Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                          Buffers: shared hit=1
+                          ->  Seq Scan on public.diseases dis  (cost=0.00..1.08 rows=8 width=27) (actual time=0.002..0.002 rows=8.00 loops=1)
+                                Output: dis.disease_name, dis.disease_id
+                                Buffers: shared hit=1
+              ->  Hash  (cost=1.03..1.03 rows=3 width=36) (actual time=0.005..0.006 rows=3.00 loops=1)
+                    Output: m.model_name, m.version, m.model_id
+                    Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                    Buffers: shared hit=1
+                    ->  Seq Scan on public.ml_models m  (cost=0.00..1.03 rows=3 width=36) (actual time=0.002..0.002 rows=3.00 loops=1)
+                          Output: m.model_name, m.version, m.model_id
+                          Buffers: shared hit=1
+Planning:
+  Buffers: shared hit=230
+Planning Time: 0.451 ms
+Execution Time: 20.122 ms

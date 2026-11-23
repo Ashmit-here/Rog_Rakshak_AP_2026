@@ -1,4 +1,3 @@
-
 CREATE TABLE roles (
     role_id text PRIMARY KEY,
     role_name text NOT NULL,
@@ -9,7 +8,7 @@ CREATE TABLE users (
     user_id text PRIMARY KEY,
     role_id text REFERENCES roles(role_id),
     full_name text NOT NULL,
-    email text NOT NULL,
+    email text NOT NULL UNIQUE,
     password_hash text,
     account_status text
 );
@@ -33,7 +32,6 @@ CREATE TABLE areas (
     boundary text
 );
 
--- Hospitals (created after areas because of the foreign key).
 CREATE TABLE hospitals (
     hospital_id text PRIMARY KEY,
     registration_no text UNIQUE,
@@ -68,7 +66,8 @@ CREATE TABLE disease_report_lines (
     age_group text NOT NULL,
     case_classification text NOT NULL,
     case_count integer NOT NULL,
-    PRIMARY KEY (report_id, line_no)
+    PRIMARY KEY (report_id, line_no),
+    CONSTRAINT chk_case_count CHECK (case_count >= 0)
 );
 
 CREATE TABLE report_attachments (
@@ -80,7 +79,6 @@ CREATE TABLE report_attachments (
     uploaded_at timestamptz
 );
 
--- Hospital access.
 CREATE TABLE hospital_users (
     hospital_id text NOT NULL REFERENCES hospitals(hospital_id),
     user_id text NOT NULL REFERENCES users(user_id),
@@ -89,7 +87,6 @@ CREATE TABLE hospital_users (
     PRIMARY KEY (hospital_id, user_id)
 );
 
--- Medical offices and time-bounded area jurisdiction.
 CREATE TABLE medical_offices (
     medical_office_id text PRIMARY KEY,
     office_name text NOT NULL,
@@ -103,10 +100,11 @@ CREATE TABLE medical_office_areas (
     area_id text NOT NULL REFERENCES areas(area_id),
     valid_from date NOT NULL,
     valid_to date,
-    PRIMARY KEY (medical_office_id, area_id, valid_from)
+    PRIMARY KEY (medical_office_id, area_id, valid_from),
+    CONSTRAINT chk_valid_dates
+        CHECK (valid_to IS NULL OR valid_to >= valid_from)
 );
 
--- Environmental and vector observations.
 CREATE TABLE weather_observations (
     weather_id text PRIMARY KEY,
     area_id text NOT NULL REFERENCES areas(area_id),
@@ -114,7 +112,11 @@ CREATE TABLE weather_observations (
     temperature_c numeric,
     humidity_percent numeric,
     rainfall_mm numeric,
-    source text
+    source text,
+    CONSTRAINT chk_humidity
+        CHECK (humidity_percent BETWEEN 0 AND 100),
+    CONSTRAINT chk_rainfall
+        CHECK (rainfall_mm >= 0)
 );
 
 CREATE TABLE vector_observations (
@@ -124,7 +126,9 @@ CREATE TABLE vector_observations (
     species text NOT NULL,
     adult_count integer,
     larvae_count integer,
-    sampling_method text
+    sampling_method text,
+    CONSTRAINT chk_adult_count CHECK (adult_count >= 0),
+    CONSTRAINT chk_larvae_count CHECK (larvae_count >= 0)
 );
 
 CREATE TABLE breeding_sites (
@@ -141,10 +145,10 @@ CREATE TABLE population_estimates (
     area_id text NOT NULL REFERENCES areas(area_id),
     reference_year integer NOT NULL,
     population_count bigint NOT NULL,
-    source text
+    source text,
+    CONSTRAINT chk_population_count CHECK (population_count >= 0)
 );
 
--- Models, predictions, and related risk signals.
 CREATE TABLE ml_models (
     model_id text PRIMARY KEY,
     model_name text NOT NULL,
@@ -163,7 +167,9 @@ CREATE TABLE risk_predictions (
     forecast_start date NOT NULL,
     forecast_end date NOT NULL,
     risk_score numeric NOT NULL,
-    risk_level text NOT NULL
+    risk_level text NOT NULL,
+    CONSTRAINT chk_forecast_dates
+        CHECK (forecast_end >= forecast_start)
 );
 
 CREATE TABLE prediction_features (
@@ -193,7 +199,6 @@ CREATE TABLE alerts (
     status text
 );
 
--- Field response and public guidance.
 CREATE TABLE interventions (
     intervention_id text PRIMARY KEY,
     area_id text NOT NULL REFERENCES areas(area_id),
@@ -208,7 +213,8 @@ CREATE TABLE field_teams (
     team_id text PRIMARY KEY,
     medical_office_id text NOT NULL REFERENCES medical_offices(medical_office_id),
     team_name text NOT NULL,
-    members_count integer
+    members_count integer,
+    CONSTRAINT chk_members_count CHECK (members_count >= 0)
 );
 
 CREATE TABLE intervention_assignments (

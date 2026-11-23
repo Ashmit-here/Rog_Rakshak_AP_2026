@@ -1,0 +1,96 @@
+Execution plans for R25
+Database: Rog_AP_2026
+Executions: 3
+
+================================================================================
+RUN 1
+================================================================================
+
+Sort  (cost=145.88..145.89 rows=1 width=53) (actual time=0.400..0.400 rows=0.00 loops=1)
+  Output: h.hospital_id, h.hospital_name, h.contact_email
+  Sort Key: h.hospital_name
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=56
+  ->  Hash Right Anti Join  (cost=3.12..145.87 rows=1 width=53) (actual time=0.392..0.392 rows=0.00 loops=1)
+        Output: h.hospital_id, h.hospital_name, h.contact_email
+        Inner Unique: true
+        Hash Cond: (dr.hospital_id = h.hospital_id)
+        Buffers: shared hit=53
+        ->  Seq Scan on public.disease_reports dr  (cost=0.00..138.50 rows=309 width=9) (actual time=0.003..0.364 rows=299.00 loops=1)
+              Output: dr.report_id, dr.hospital_id, dr.submitted_by, dr.submitted_at, dr.report_status
+              Filter: (dr.submitted_at >= (CURRENT_TIMESTAMP - '30 days'::interval))
+              Rows Removed by Filter: 4701
+              Buffers: shared hit=51
+        ->  Hash  (cost=2.50..2.50 rows=50 width=53) (actual time=0.010..0.010 rows=50.00 loops=1)
+              Output: h.hospital_id, h.hospital_name, h.contact_email
+              Buckets: 1024  Batches: 1  Memory Usage: 13kB
+              Buffers: shared hit=2
+              ->  Seq Scan on public.hospitals h  (cost=0.00..2.50 rows=50 width=53) (actual time=0.002..0.005 rows=50.00 loops=1)
+                    Output: h.hospital_id, h.hospital_name, h.contact_email
+                    Buffers: shared hit=2
+Planning:
+  Buffers: shared hit=142
+Planning Time: 0.324 ms
+Execution Time: 0.412 ms
+
+================================================================================
+RUN 2
+================================================================================
+
+Sort  (cost=145.88..145.89 rows=1 width=53) (actual time=0.373..0.374 rows=0.00 loops=1)
+  Output: h.hospital_id, h.hospital_name, h.contact_email
+  Sort Key: h.hospital_name
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=56
+  ->  Hash Right Anti Join  (cost=3.12..145.87 rows=1 width=53) (actual time=0.366..0.366 rows=0.00 loops=1)
+        Output: h.hospital_id, h.hospital_name, h.contact_email
+        Inner Unique: true
+        Hash Cond: (dr.hospital_id = h.hospital_id)
+        Buffers: shared hit=53
+        ->  Seq Scan on public.disease_reports dr  (cost=0.00..138.50 rows=309 width=9) (actual time=0.003..0.338 rows=299.00 loops=1)
+              Output: dr.report_id, dr.hospital_id, dr.submitted_by, dr.submitted_at, dr.report_status
+              Filter: (dr.submitted_at >= (CURRENT_TIMESTAMP - '30 days'::interval))
+              Rows Removed by Filter: 4701
+              Buffers: shared hit=51
+        ->  Hash  (cost=2.50..2.50 rows=50 width=53) (actual time=0.010..0.010 rows=50.00 loops=1)
+              Output: h.hospital_id, h.hospital_name, h.contact_email
+              Buckets: 1024  Batches: 1  Memory Usage: 13kB
+              Buffers: shared hit=2
+              ->  Seq Scan on public.hospitals h  (cost=0.00..2.50 rows=50 width=53) (actual time=0.002..0.005 rows=50.00 loops=1)
+                    Output: h.hospital_id, h.hospital_name, h.contact_email
+                    Buffers: shared hit=2
+Planning:
+  Buffers: shared hit=142
+Planning Time: 0.280 ms
+Execution Time: 0.386 ms
+
+================================================================================
+RUN 3
+================================================================================
+
+Sort  (cost=145.88..145.89 rows=1 width=53) (actual time=0.391..0.392 rows=0.00 loops=1)
+  Output: h.hospital_id, h.hospital_name, h.contact_email
+  Sort Key: h.hospital_name
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=56
+  ->  Hash Right Anti Join  (cost=3.12..145.87 rows=1 width=53) (actual time=0.384..0.384 rows=0.00 loops=1)
+        Output: h.hospital_id, h.hospital_name, h.contact_email
+        Inner Unique: true
+        Hash Cond: (dr.hospital_id = h.hospital_id)
+        Buffers: shared hit=53
+        ->  Seq Scan on public.disease_reports dr  (cost=0.00..138.50 rows=309 width=9) (actual time=0.003..0.355 rows=299.00 loops=1)
+              Output: dr.report_id, dr.hospital_id, dr.submitted_by, dr.submitted_at, dr.report_status
+              Filter: (dr.submitted_at >= (CURRENT_TIMESTAMP - '30 days'::interval))
+              Rows Removed by Filter: 4701
+              Buffers: shared hit=51
+        ->  Hash  (cost=2.50..2.50 rows=50 width=53) (actual time=0.010..0.010 rows=50.00 loops=1)
+              Output: h.hospital_id, h.hospital_name, h.contact_email
+              Buckets: 1024  Batches: 1  Memory Usage: 13kB
+              Buffers: shared hit=2
+              ->  Seq Scan on public.hospitals h  (cost=0.00..2.50 rows=50 width=53) (actual time=0.002..0.005 rows=50.00 loops=1)
+                    Output: h.hospital_id, h.hospital_name, h.contact_email
+                    Buffers: shared hit=2
+Planning:
+  Buffers: shared hit=142
+Planning Time: 0.287 ms
+Execution Time: 0.405 ms

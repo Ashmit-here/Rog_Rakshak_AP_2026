@@ -1,0 +1,165 @@
+Execution plans for R5
+Database: Rog_AP_2026
+Executions: 3
+
+================================================================================
+RUN 1
+================================================================================
+
+Sort  (cost=28.65..28.65 rows=3 width=82) (actual time=0.067..0.068 rows=3.00 loops=1)
+  Output: dr.report_id, dr.submitted_at, d.disease_name, a.area_name, drl.report_date, drl.age_group, drl.case_classification, drl.case_count, drl.line_no
+  Sort Key: drl.line_no
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=14
+  ->  Nested Loop  (cost=15.47..28.62 rows=3 width=82) (actual time=0.051..0.057 rows=3.00 loops=1)
+        Output: dr.report_id, dr.submitted_at, d.disease_name, a.area_name, drl.report_date, drl.age_group, drl.case_classification, drl.case_count, drl.line_no
+        Join Filter: (d.disease_id = drl.disease_id)
+        Rows Removed by Join Filter: 21
+        Buffers: shared hit=11
+        ->  Seq Scan on public.diseases d  (cost=0.00..1.08 rows=8 width=27) (actual time=0.002..0.002 rows=8.00 loops=1)
+              Output: d.disease_id, d.disease_name, d.pathogen_type, d.vector_type
+              Buffers: shared hit=1
+        ->  Materialize  (cost=15.47..27.19 rows=3 width=69) (actual time=0.006..0.007 rows=3.00 loops=8)
+              Output: dr.report_id, dr.submitted_at, drl.report_date, drl.age_group, drl.case_classification, drl.case_count, drl.line_no, drl.disease_id, a.area_name
+              Storage: Memory  Maximum Storage: 17kB
+              Buffers: shared hit=10
+              ->  Nested Loop  (cost=15.47..27.18 rows=3 width=69) (actual time=0.046..0.050 rows=3.00 loops=1)
+                    Output: dr.report_id, dr.submitted_at, drl.report_date, drl.age_group, drl.case_classification, drl.case_count, drl.line_no, drl.disease_id, a.area_name
+                    Buffers: shared hit=10
+                    ->  Index Scan using disease_reports_pkey on public.disease_reports dr  (cost=0.28..8.30 rows=1 width=18) (actual time=0.012..0.013 rows=1.00 loops=1)
+                          Output: dr.report_id, dr.hospital_id, dr.submitted_by, dr.submitted_at, dr.report_status
+                          Index Cond: (dr.report_id = 'REP-11016'::text)
+                          Index Searches: 1
+                          Buffers: shared hit=3
+                    ->  Hash Join  (cost=15.19..18.85 rows=3 width=61) (actual time=0.033..0.037 rows=3.00 loops=1)
+                          Output: drl.report_date, drl.age_group, drl.case_classification, drl.case_count, drl.line_no, drl.report_id, drl.disease_id, a.area_name
+                          Hash Cond: (a.area_id = drl.area_id)
+                          Buffers: shared hit=7
+                          ->  Seq Scan on public.areas a  (cost=0.00..3.00 rows=100 width=27) (actual time=0.001..0.004 rows=100.00 loops=1)
+                                Output: a.area_id, a.area_name, a.district_id, a.area_type, a.boundary
+                                Buffers: shared hit=2
+                          ->  Hash  (cost=15.15..15.15 rows=3 width=54) (actual time=0.025..0.025 rows=3.00 loops=1)
+                                Output: drl.report_date, drl.age_group, drl.case_classification, drl.case_count, drl.line_no, drl.report_id, drl.disease_id, drl.area_id
+                                Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                                Buffers: shared hit=5
+                                ->  Bitmap Heap Scan on public.disease_report_lines drl  (cost=4.31..15.15 rows=3 width=54) (actual time=0.016..0.022 rows=3.00 loops=1)
+                                      Output: drl.report_date, drl.age_group, drl.case_classification, drl.case_count, drl.line_no, drl.report_id, drl.disease_id, drl.area_id
+                                      Recheck Cond: (drl.report_id = 'REP-11016'::text)
+                                      Heap Blocks: exact=3
+                                      Buffers: shared hit=5
+                                      ->  Bitmap Index Scan on disease_report_lines_pkey  (cost=0.00..4.31 rows=3 width=0) (actual time=0.007..0.007 rows=3.00 loops=1)
+                                            Index Cond: (drl.report_id = 'REP-11016'::text)
+                                            Index Searches: 1
+                                            Buffers: shared hit=2
+Planning:
+  Buffers: shared hit=295
+Planning Time: 0.751 ms
+Execution Time: 0.102 ms
+
+================================================================================
+RUN 2
+================================================================================
+
+Sort  (cost=28.65..28.65 rows=3 width=82) (actual time=0.048..0.049 rows=3.00 loops=1)
+  Output: dr.report_id, dr.submitted_at, d.disease_name, a.area_name, drl.report_date, drl.age_group, drl.case_classification, drl.case_count, drl.line_no
+  Sort Key: drl.line_no
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=14
+  ->  Nested Loop  (cost=15.47..28.62 rows=3 width=82) (actual time=0.032..0.039 rows=3.00 loops=1)
+        Output: dr.report_id, dr.submitted_at, d.disease_name, a.area_name, drl.report_date, drl.age_group, drl.case_classification, drl.case_count, drl.line_no
+        Join Filter: (d.disease_id = drl.disease_id)
+        Rows Removed by Join Filter: 21
+        Buffers: shared hit=11
+        ->  Seq Scan on public.diseases d  (cost=0.00..1.08 rows=8 width=27) (actual time=0.001..0.002 rows=8.00 loops=1)
+              Output: d.disease_id, d.disease_name, d.pathogen_type, d.vector_type
+              Buffers: shared hit=1
+        ->  Materialize  (cost=15.47..27.19 rows=3 width=69) (actual time=0.004..0.004 rows=3.00 loops=8)
+              Output: dr.report_id, dr.submitted_at, drl.report_date, drl.age_group, drl.case_classification, drl.case_count, drl.line_no, drl.disease_id, a.area_name
+              Storage: Memory  Maximum Storage: 17kB
+              Buffers: shared hit=10
+              ->  Nested Loop  (cost=15.47..27.18 rows=3 width=69) (actual time=0.028..0.033 rows=3.00 loops=1)
+                    Output: dr.report_id, dr.submitted_at, drl.report_date, drl.age_group, drl.case_classification, drl.case_count, drl.line_no, drl.disease_id, a.area_name
+                    Buffers: shared hit=10
+                    ->  Index Scan using disease_reports_pkey on public.disease_reports dr  (cost=0.28..8.30 rows=1 width=18) (actual time=0.006..0.006 rows=1.00 loops=1)
+                          Output: dr.report_id, dr.hospital_id, dr.submitted_by, dr.submitted_at, dr.report_status
+                          Index Cond: (dr.report_id = 'REP-11016'::text)
+                          Index Searches: 1
+                          Buffers: shared hit=3
+                    ->  Hash Join  (cost=15.19..18.85 rows=3 width=61) (actual time=0.022..0.026 rows=3.00 loops=1)
+                          Output: drl.report_date, drl.age_group, drl.case_classification, drl.case_count, drl.line_no, drl.report_id, drl.disease_id, a.area_name
+                          Hash Cond: (a.area_id = drl.area_id)
+                          Buffers: shared hit=7
+                          ->  Seq Scan on public.areas a  (cost=0.00..3.00 rows=100 width=27) (actual time=0.001..0.004 rows=100.00 loops=1)
+                                Output: a.area_id, a.area_name, a.district_id, a.area_type, a.boundary
+                                Buffers: shared hit=2
+                          ->  Hash  (cost=15.15..15.15 rows=3 width=54) (actual time=0.014..0.015 rows=3.00 loops=1)
+                                Output: drl.report_date, drl.age_group, drl.case_classification, drl.case_count, drl.line_no, drl.report_id, drl.disease_id, drl.area_id
+                                Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                                Buffers: shared hit=5
+                                ->  Bitmap Heap Scan on public.disease_report_lines drl  (cost=4.31..15.15 rows=3 width=54) (actual time=0.009..0.012 rows=3.00 loops=1)
+                                      Output: drl.report_date, drl.age_group, drl.case_classification, drl.case_count, drl.line_no, drl.report_id, drl.disease_id, drl.area_id
+                                      Recheck Cond: (drl.report_id = 'REP-11016'::text)
+                                      Heap Blocks: exact=3
+                                      Buffers: shared hit=5
+                                      ->  Bitmap Index Scan on disease_report_lines_pkey  (cost=0.00..4.31 rows=3 width=0) (actual time=0.005..0.005 rows=3.00 loops=1)
+                                            Index Cond: (drl.report_id = 'REP-11016'::text)
+                                            Index Searches: 1
+                                            Buffers: shared hit=2
+Planning:
+  Buffers: shared hit=295
+Planning Time: 0.469 ms
+Execution Time: 0.081 ms
+
+================================================================================
+RUN 3
+================================================================================
+
+Sort  (cost=28.65..28.65 rows=3 width=82) (actual time=0.049..0.049 rows=3.00 loops=1)
+  Output: dr.report_id, dr.submitted_at, d.disease_name, a.area_name, drl.report_date, drl.age_group, drl.case_classification, drl.case_count, drl.line_no
+  Sort Key: drl.line_no
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=14
+  ->  Nested Loop  (cost=15.47..28.62 rows=3 width=82) (actual time=0.033..0.039 rows=3.00 loops=1)
+        Output: dr.report_id, dr.submitted_at, d.disease_name, a.area_name, drl.report_date, drl.age_group, drl.case_classification, drl.case_count, drl.line_no
+        Join Filter: (d.disease_id = drl.disease_id)
+        Rows Removed by Join Filter: 21
+        Buffers: shared hit=11
+        ->  Seq Scan on public.diseases d  (cost=0.00..1.08 rows=8 width=27) (actual time=0.001..0.002 rows=8.00 loops=1)
+              Output: d.disease_id, d.disease_name, d.pathogen_type, d.vector_type
+              Buffers: shared hit=1
+        ->  Materialize  (cost=15.47..27.19 rows=3 width=69) (actual time=0.004..0.004 rows=3.00 loops=8)
+              Output: dr.report_id, dr.submitted_at, drl.report_date, drl.age_group, drl.case_classification, drl.case_count, drl.line_no, drl.disease_id, a.area_name
+              Storage: Memory  Maximum Storage: 17kB
+              Buffers: shared hit=10
+              ->  Nested Loop  (cost=15.47..27.18 rows=3 width=69) (actual time=0.029..0.033 rows=3.00 loops=1)
+                    Output: dr.report_id, dr.submitted_at, drl.report_date, drl.age_group, drl.case_classification, drl.case_count, drl.line_no, drl.disease_id, a.area_name
+                    Buffers: shared hit=10
+                    ->  Index Scan using disease_reports_pkey on public.disease_reports dr  (cost=0.28..8.30 rows=1 width=18) (actual time=0.006..0.006 rows=1.00 loops=1)
+                          Output: dr.report_id, dr.hospital_id, dr.submitted_by, dr.submitted_at, dr.report_status
+                          Index Cond: (dr.report_id = 'REP-11016'::text)
+                          Index Searches: 1
+                          Buffers: shared hit=3
+                    ->  Hash Join  (cost=15.19..18.85 rows=3 width=61) (actual time=0.023..0.026 rows=3.00 loops=1)
+                          Output: drl.report_date, drl.age_group, drl.case_classification, drl.case_count, drl.line_no, drl.report_id, drl.disease_id, a.area_name
+                          Hash Cond: (a.area_id = drl.area_id)
+                          Buffers: shared hit=7
+                          ->  Seq Scan on public.areas a  (cost=0.00..3.00 rows=100 width=27) (actual time=0.001..0.004 rows=100.00 loops=1)
+                                Output: a.area_id, a.area_name, a.district_id, a.area_type, a.boundary
+                                Buffers: shared hit=2
+                          ->  Hash  (cost=15.15..15.15 rows=3 width=54) (actual time=0.015..0.015 rows=3.00 loops=1)
+                                Output: drl.report_date, drl.age_group, drl.case_classification, drl.case_count, drl.line_no, drl.report_id, drl.disease_id, drl.area_id
+                                Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                                Buffers: shared hit=5
+                                ->  Bitmap Heap Scan on public.disease_report_lines drl  (cost=4.31..15.15 rows=3 width=54) (actual time=0.010..0.012 rows=3.00 loops=1)
+                                      Output: drl.report_date, drl.age_group, drl.case_classification, drl.case_count, drl.line_no, drl.report_id, drl.disease_id, drl.area_id
+                                      Recheck Cond: (drl.report_id = 'REP-11016'::text)
+                                      Heap Blocks: exact=3
+                                      Buffers: shared hit=5
+                                      ->  Bitmap Index Scan on disease_report_lines_pkey  (cost=0.00..4.31 rows=3 width=0) (actual time=0.004..0.004 rows=3.00 loops=1)
+                                            Index Cond: (drl.report_id = 'REP-11016'::text)
+                                            Index Searches: 1
+                                            Buffers: shared hit=2
+Planning:
+  Buffers: shared hit=295
+Planning Time: 0.483 ms
+Execution Time: 0.083 ms

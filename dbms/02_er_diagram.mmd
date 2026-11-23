@@ -22,11 +22,12 @@ erDiagram
         string address
         string area_id FK
         string contact_email
+        string hospital_status
     }
 
     HOSPITAL_USERS {
-        string hospital_id PK
-        string user_id PK
+        string hospital_id PK, FK
+        string user_id PK, FK
         string membership_status
         datetime joined_at
     }
@@ -47,7 +48,7 @@ erDiagram
         string area_name
         string district_id FK
         string area_type
-        geometry boundary
+        string boundary
     }
 
     MEDICAL_OFFICES {
@@ -59,10 +60,10 @@ erDiagram
     }
 
     MEDICAL_OFFICE_AREAS {
-        string medical_office_id PK
-        string area_id PK
-        datetime valid_from PK
-        datetime valid_to
+        string medical_office_id PK, FK
+        string area_id PK, FK
+        date valid_from PK
+        date valid_to
     }
 
     DISEASES {
@@ -81,7 +82,7 @@ erDiagram
     }
 
     DISEASE_REPORT_LINES {
-        string report_id PK
+        string report_id PK, FK
         int line_no PK
         string disease_id FK
         string area_id FK
@@ -124,7 +125,7 @@ erDiagram
         string breeding_site_id PK
         string area_id FK
         string site_type
-        geometry location
+        string location
         string site_status
         datetime last_inspected_at
     }
@@ -133,7 +134,7 @@ erDiagram
         string population_id PK
         string area_id FK
         int reference_year
-        int population_count
+        bigint population_count
         string source
     }
 
@@ -159,7 +160,7 @@ erDiagram
     }
 
     PREDICTION_FEATURES {
-        string prediction_id PK
+        string prediction_id PK, FK
         string feature_name PK
         decimal feature_value
         decimal contribution_value
@@ -202,8 +203,8 @@ erDiagram
     }
 
     INTERVENTION_ASSIGNMENTS {
-        string intervention_id PK
-        string team_id PK
+        string intervention_id PK, FK
+        string team_id PK, FK
         datetime assigned_at
     }
 
@@ -233,7 +234,7 @@ erDiagram
         datetime updated_at
     }
 
-    ROLES ||--o{ USERS : assigns
+    ROLES o|--o{ USERS : assigns
     USERS ||--o{ HOSPITAL_USERS : has_membership
     HOSPITALS ||--o{ HOSPITAL_USERS : has_members
     AREAS ||--o{ HOSPITALS : located_in

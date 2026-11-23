@@ -1,0 +1,117 @@
+Execution plans for R19
+Database: Rog_AP_2026
+Executions: 3
+
+================================================================================
+RUN 1
+================================================================================
+
+Sort  (cost=229.87..229.88 rows=3 width=26) (actual time=2.089..2.090 rows=3.00 loops=1)
+  Output: i.status, (count(DISTINCT i.intervention_id)), (count(DISTINCT ir.intervention_report_id))
+  Sort Key: (count(DISTINCT i.intervention_id)) DESC
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=46
+  ->  GroupAggregate  (cost=209.82..229.85 rows=3 width=26) (actual time=1.886..2.085 rows=3.00 loops=1)
+        Output: i.status, count(DISTINCT i.intervention_id), count(DISTINCT ir.intervention_report_id)
+        Group Key: i.status
+        Buffers: shared hit=43
+        ->  Sort  (cost=209.82..214.82 rows=2000 width=27) (actual time=1.781..1.814 rows=2000.00 loops=1)
+              Output: i.status, i.intervention_id, ir.intervention_report_id
+              Sort Key: i.status, i.intervention_id
+              Sort Method: quicksort  Memory: 136kB
+              Buffers: shared hit=43
+              ->  Hash Right Join  (cost=69.00..100.16 rows=2000 width=27) (actual time=0.197..0.377 rows=2000.00 loops=1)
+                    Output: i.status, i.intervention_id, ir.intervention_report_id
+                    Inner Unique: true
+                    Hash Cond: (ir.intervention_id = i.intervention_id)
+                    Buffers: shared hit=40
+                    ->  Seq Scan on public.intervention_reports ir  (cost=0.00..28.00 rows=1200 width=17) (actual time=0.004..0.060 rows=1200.00 loops=1)
+                          Output: ir.intervention_report_id, ir.intervention_id, ir.submitted_by, ir.outcome, ir.notes, ir.completed_at
+                          Buffers: shared hit=16
+                    ->  Hash  (cost=44.00..44.00 rows=2000 width=19) (actual time=0.189..0.189 rows=2000.00 loops=1)
+                          Output: i.status, i.intervention_id
+                          Buckets: 2048  Batches: 1  Memory Usage: 116kB
+                          Buffers: shared hit=24
+                          ->  Seq Scan on public.interventions i  (cost=0.00..44.00 rows=2000 width=19) (actual time=0.003..0.097 rows=2000.00 loops=1)
+                                Output: i.status, i.intervention_id
+                                Buffers: shared hit=24
+Planning:
+  Buffers: shared hit=129
+Planning Time: 0.291 ms
+Execution Time: 2.119 ms
+
+================================================================================
+RUN 2
+================================================================================
+
+Sort  (cost=229.87..229.88 rows=3 width=26) (actual time=2.189..2.190 rows=3.00 loops=1)
+  Output: i.status, (count(DISTINCT i.intervention_id)), (count(DISTINCT ir.intervention_report_id))
+  Sort Key: (count(DISTINCT i.intervention_id)) DESC
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=46
+  ->  GroupAggregate  (cost=209.82..229.85 rows=3 width=26) (actual time=1.974..2.184 rows=3.00 loops=1)
+        Output: i.status, count(DISTINCT i.intervention_id), count(DISTINCT ir.intervention_report_id)
+        Group Key: i.status
+        Buffers: shared hit=43
+        ->  Sort  (cost=209.82..214.82 rows=2000 width=27) (actual time=1.865..1.899 rows=2000.00 loops=1)
+              Output: i.status, i.intervention_id, ir.intervention_report_id
+              Sort Key: i.status, i.intervention_id
+              Sort Method: quicksort  Memory: 136kB
+              Buffers: shared hit=43
+              ->  Hash Right Join  (cost=69.00..100.16 rows=2000 width=27) (actual time=0.191..0.361 rows=2000.00 loops=1)
+                    Output: i.status, i.intervention_id, ir.intervention_report_id
+                    Inner Unique: true
+                    Hash Cond: (ir.intervention_id = i.intervention_id)
+                    Buffers: shared hit=40
+                    ->  Seq Scan on public.intervention_reports ir  (cost=0.00..28.00 rows=1200 width=17) (actual time=0.002..0.042 rows=1200.00 loops=1)
+                          Output: ir.intervention_report_id, ir.intervention_id, ir.submitted_by, ir.outcome, ir.notes, ir.completed_at
+                          Buffers: shared hit=16
+                    ->  Hash  (cost=44.00..44.00 rows=2000 width=19) (actual time=0.186..0.186 rows=2000.00 loops=1)
+                          Output: i.status, i.intervention_id
+                          Buckets: 2048  Batches: 1  Memory Usage: 116kB
+                          Buffers: shared hit=24
+                          ->  Seq Scan on public.interventions i  (cost=0.00..44.00 rows=2000 width=19) (actual time=0.003..0.099 rows=2000.00 loops=1)
+                                Output: i.status, i.intervention_id
+                                Buffers: shared hit=24
+Planning:
+  Buffers: shared hit=129
+Planning Time: 0.268 ms
+Execution Time: 2.220 ms
+
+================================================================================
+RUN 3
+================================================================================
+
+Sort  (cost=229.87..229.88 rows=3 width=26) (actual time=2.067..2.067 rows=3.00 loops=1)
+  Output: i.status, (count(DISTINCT i.intervention_id)), (count(DISTINCT ir.intervention_report_id))
+  Sort Key: (count(DISTINCT i.intervention_id)) DESC
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=46
+  ->  GroupAggregate  (cost=209.82..229.85 rows=3 width=26) (actual time=1.863..2.062 rows=3.00 loops=1)
+        Output: i.status, count(DISTINCT i.intervention_id), count(DISTINCT ir.intervention_report_id)
+        Group Key: i.status
+        Buffers: shared hit=43
+        ->  Sort  (cost=209.82..214.82 rows=2000 width=27) (actual time=1.758..1.791 rows=2000.00 loops=1)
+              Output: i.status, i.intervention_id, ir.intervention_report_id
+              Sort Key: i.status, i.intervention_id
+              Sort Method: quicksort  Memory: 136kB
+              Buffers: shared hit=43
+              ->  Hash Right Join  (cost=69.00..100.16 rows=2000 width=27) (actual time=0.190..0.356 rows=2000.00 loops=1)
+                    Output: i.status, i.intervention_id, ir.intervention_report_id
+                    Inner Unique: true
+                    Hash Cond: (ir.intervention_id = i.intervention_id)
+                    Buffers: shared hit=40
+                    ->  Seq Scan on public.intervention_reports ir  (cost=0.00..28.00 rows=1200 width=17) (actual time=0.003..0.039 rows=1200.00 loops=1)
+                          Output: ir.intervention_report_id, ir.intervention_id, ir.submitted_by, ir.outcome, ir.notes, ir.completed_at
+                          Buffers: shared hit=16
+                    ->  Hash  (cost=44.00..44.00 rows=2000 width=19) (actual time=0.184..0.184 rows=2000.00 loops=1)
+                          Output: i.status, i.intervention_id
+                          Buckets: 2048  Batches: 1  Memory Usage: 116kB
+                          Buffers: shared hit=24
+                          ->  Seq Scan on public.interventions i  (cost=0.00..44.00 rows=2000 width=19) (actual time=0.003..0.098 rows=2000.00 loops=1)
+                                Output: i.status, i.intervention_id
+                                Buffers: shared hit=24
+Planning:
+  Buffers: shared hit=129
+Planning Time: 0.264 ms
+Execution Time: 2.097 ms

@@ -1,0 +1,69 @@
+Execution plans for R9
+Database: Rog_AP_2026
+Executions: 3
+
+================================================================================
+RUN 1
+================================================================================
+
+Sort  (cost=396.11..396.12 rows=5 width=13) (actual time=1.535..1.535 rows=5.00 loops=1)
+  Output: age_group, (sum(case_count))
+  Sort Key: (sum(drl.case_count)) DESC
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=174
+  ->  HashAggregate  (cost=396.00..396.05 rows=5 width=13) (actual time=1.528..1.529 rows=5.00 loops=1)
+        Output: age_group, sum(case_count)
+        Group Key: drl.age_group
+        Batches: 1  Memory Usage: 32kB
+        Buffers: shared hit=171
+        ->  Seq Scan on public.disease_report_lines drl  (cost=0.00..321.00 rows=15000 width=9) (actual time=0.003..0.470 rows=15000.00 loops=1)
+              Output: report_id, line_no, disease_id, area_id, report_date, age_group, case_classification, case_count
+              Buffers: shared hit=171
+Planning:
+  Buffers: shared hit=97
+Planning Time: 0.144 ms
+Execution Time: 1.565 ms
+
+================================================================================
+RUN 2
+================================================================================
+
+Sort  (cost=396.11..396.12 rows=5 width=13) (actual time=1.496..1.496 rows=5.00 loops=1)
+  Output: age_group, (sum(case_count))
+  Sort Key: (sum(drl.case_count)) DESC
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=174
+  ->  HashAggregate  (cost=396.00..396.05 rows=5 width=13) (actual time=1.489..1.490 rows=5.00 loops=1)
+        Output: age_group, sum(case_count)
+        Group Key: drl.age_group
+        Batches: 1  Memory Usage: 32kB
+        Buffers: shared hit=171
+        ->  Seq Scan on public.disease_report_lines drl  (cost=0.00..321.00 rows=15000 width=9) (actual time=0.003..0.476 rows=15000.00 loops=1)
+              Output: report_id, line_no, disease_id, area_id, report_date, age_group, case_classification, case_count
+              Buffers: shared hit=171
+Planning:
+  Buffers: shared hit=97
+Planning Time: 0.145 ms
+Execution Time: 1.524 ms
+
+================================================================================
+RUN 3
+================================================================================
+
+Sort  (cost=396.11..396.12 rows=5 width=13) (actual time=1.524..1.524 rows=5.00 loops=1)
+  Output: age_group, (sum(case_count))
+  Sort Key: (sum(drl.case_count)) DESC
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=174
+  ->  HashAggregate  (cost=396.00..396.05 rows=5 width=13) (actual time=1.517..1.518 rows=5.00 loops=1)
+        Output: age_group, sum(case_count)
+        Group Key: drl.age_group
+        Batches: 1  Memory Usage: 32kB
+        Buffers: shared hit=171
+        ->  Seq Scan on public.disease_report_lines drl  (cost=0.00..321.00 rows=15000 width=9) (actual time=0.003..0.466 rows=15000.00 loops=1)
+              Output: report_id, line_no, disease_id, area_id, report_date, age_group, case_classification, case_count
+              Buffers: shared hit=171
+Planning:
+  Buffers: shared hit=97
+Planning Time: 0.144 ms
+Execution Time: 1.554 ms
