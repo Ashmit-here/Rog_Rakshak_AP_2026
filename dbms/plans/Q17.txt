@@ -1,0 +1,53 @@
+                                                                                  QUERY PLAN                                                                                   
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Sort  (cost=941.45..949.78 rows=3333 width=72) (actual time=2.889..2.948 rows=3333.00 loops=1)
+   Output: al.alert_id, a.area_name, d.disease_name, al.severity, al.status, al.created_at, rp.risk_score
+   Sort Key: al.created_at DESC
+   Sort Method: quicksort  Memory: 421kB
+   Buffers: shared hit=312
+   ->  Hash Join  (cost=168.59..746.43 rows=3333 width=72) (actual time=0.640..2.555 rows=3333.00 loops=1)
+         Output: al.alert_id, a.area_name, d.disease_name, al.severity, al.status, al.created_at, rp.risk_score
+         Inner Unique: true
+         Hash Cond: (al.disease_id = d.disease_id)
+         Buffers: shared hit=309
+         ->  Hash Join  (cost=167.41..731.86 rows=3333 width=59) (actual time=0.632..2.336 rows=3333.00 loops=1)
+               Output: al.alert_id, al.severity, al.status, al.created_at, al.disease_id, a.area_name, rp.risk_score
+               Inner Unique: true
+               Hash Cond: (al.area_id = a.area_id)
+               Buffers: shared hit=308
+               ->  Hash Right Join  (cost=163.16..718.49 rows=3333 width=52) (actual time=0.620..2.105 rows=3333.00 loops=1)
+                     Output: al.alert_id, al.severity, al.status, al.created_at, al.area_id, al.disease_id, rp.risk_score
+                     Hash Cond: (rp.prediction_id = al.prediction_id)
+                     Buffers: shared hit=306
+                     ->  Seq Scan on public.risk_predictions rp  (cost=0.00..447.00 rows=20000 width=12) (actual time=0.002..0.546 rows=20000.00 loops=1)
+                           Output: rp.prediction_id, rp.area_id, rp.disease_id, rp.model_id, rp.generated_at, rp.forecast_start, rp.forecast_end, rp.risk_score, rp.risk_level
+                           Buffers: shared hit=247
+                     ->  Hash  (cost=121.50..121.50 rows=3333 width=55) (actual time=0.614..0.614 rows=3333.00 loops=1)
+                           Output: al.alert_id, al.severity, al.status, al.created_at, al.area_id, al.disease_id, al.prediction_id
+                           Buckets: 4096  Batches: 1  Memory Usage: 335kB
+                           Buffers: shared hit=59
+                           ->  Seq Scan on public.alerts al  (cost=0.00..121.50 rows=3333 width=55) (actual time=0.004..0.328 rows=3333.00 loops=1)
+                                 Output: al.alert_id, al.severity, al.status, al.created_at, al.area_id, al.disease_id, al.prediction_id
+                                 Filter: (al.status = ANY ('{OPEN,ACKNOWLEDGED}'::text[]))
+                                 Rows Removed by Filter: 1667
+                                 Buffers: shared hit=59
+               ->  Hash  (cost=3.00..3.00 rows=100 width=27) (actual time=0.009..0.010 rows=100.00 loops=1)
+                     Output: a.area_name, a.area_id
+                     Buckets: 1024  Batches: 1  Memory Usage: 14kB
+                     Buffers: shared hit=2
+                     ->  Seq Scan on public.areas a  (cost=0.00..3.00 rows=100 width=27) (actual time=0.001..0.005 rows=100.00 loops=1)
+                           Output: a.area_name, a.area_id
+                           Buffers: shared hit=2
+         ->  Hash  (cost=1.08..1.08 rows=8 width=27) (actual time=0.005..0.005 rows=8.00 loops=1)
+               Output: d.disease_name, d.disease_id
+               Buckets: 1024  Batches: 1  Memory Usage: 9kB
+               Buffers: shared hit=1
+               ->  Seq Scan on public.diseases d  (cost=0.00..1.08 rows=8 width=27) (actual time=0.002..0.002 rows=8.00 loops=1)
+                     Output: d.disease_name, d.disease_id
+                     Buffers: shared hit=1
+ Planning:
+   Buffers: shared hit=288 dirtied=2
+ Planning Time: 0.519 ms
+ Execution Time: 3.022 ms
+(49 rows)
+

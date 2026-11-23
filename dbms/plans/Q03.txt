@@ -1,0 +1,40 @@
+                                                                 QUERY PLAN                                                                 
+--------------------------------------------------------------------------------------------------------------------------------------------
+ Sort  (cost=30.63..31.38 rows=300 width=83) (actual time=0.431..0.440 rows=300.00 loops=1)
+   Output: h.hospital_name, u.user_id, u.full_name, u.email, hu.membership_status, hu.joined_at
+   Sort Key: h.hospital_name, u.full_name
+   Sort Method: quicksort  Memory: 55kB
+   Buffers: shared hit=11
+   ->  Hash Join  (cost=10.62..18.29 rows=300 width=83) (actual time=0.068..0.156 rows=300.00 loops=1)
+         Output: h.hospital_name, u.user_id, u.full_name, u.email, hu.membership_status, hu.joined_at
+         Inner Unique: true
+         Hash Cond: (hu.user_id = u.user_id)
+         Buffers: shared hit=8
+         ->  Hash Join  (cost=3.12..9.98 rows=300 width=45) (actual time=0.026..0.078 rows=300.00 loops=1)
+               Output: hu.membership_status, hu.joined_at, hu.user_id, h.hospital_name
+               Inner Unique: true
+               Hash Cond: (hu.hospital_id = h.hospital_id)
+               Buffers: shared hit=5
+               ->  Seq Scan on public.hospital_users hu  (cost=0.00..6.00 rows=300 width=33) (actual time=0.006..0.022 rows=300.00 loops=1)
+                     Output: hu.hospital_id, hu.user_id, hu.membership_status, hu.joined_at
+                     Buffers: shared hit=3
+               ->  Hash  (cost=2.50..2.50 rows=50 width=30) (actual time=0.015..0.015 rows=50.00 loops=1)
+                     Output: h.hospital_name, h.hospital_id
+                     Buckets: 1024  Batches: 1  Memory Usage: 12kB
+                     Buffers: shared hit=2
+                     ->  Seq Scan on public.hospitals h  (cost=0.00..2.50 rows=50 width=30) (actual time=0.003..0.006 rows=50.00 loops=1)
+                           Output: h.hospital_name, h.hospital_id
+                           Buffers: shared hit=2
+         ->  Hash  (cost=5.00..5.00 rows=200 width=47) (actual time=0.037..0.038 rows=200.00 loops=1)
+               Output: u.user_id, u.full_name, u.email
+               Buckets: 1024  Batches: 1  Memory Usage: 24kB
+               Buffers: shared hit=3
+               ->  Seq Scan on public.users u  (cost=0.00..5.00 rows=200 width=47) (actual time=0.005..0.018 rows=200.00 loops=1)
+                     Output: u.user_id, u.full_name, u.email
+                     Buffers: shared hit=3
+ Planning:
+   Buffers: shared hit=166 dirtied=1
+ Planning Time: 0.656 ms
+ Execution Time: 0.487 ms
+(36 rows)
+

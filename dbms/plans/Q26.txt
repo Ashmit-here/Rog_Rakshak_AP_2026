@@ -1,0 +1,49 @@
+                                                                                QUERY PLAN                                                                                
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Sort  (cost=1762.11..1762.23 rows=50 width=46) (actual time=13.080..13.081 rows=50.00 loops=1)
+   Output: h.hospital_id, h.hospital_name, (count(DISTINCT dr.report_id)), (COALESCE(sum(drl.case_count), '0'::bigint))
+   Sort Key: (COALESCE(sum(drl.case_count), '0'::bigint)) DESC, (count(DISTINCT dr.report_id)) DESC
+   Sort Method: quicksort  Memory: 28kB
+   Buffers: shared hit=230
+   ->  GroupAggregate  (cost=1610.20..1760.70 rows=50 width=46) (actual time=12.113..13.069 rows=50.00 loops=1)
+         Output: h.hospital_id, h.hospital_name, count(DISTINCT dr.report_id), COALESCE(sum(drl.case_count), '0'::bigint)
+         Group Key: h.hospital_id
+         Buffers: shared hit=227
+         ->  Sort  (cost=1610.20..1647.70 rows=15000 width=44) (actual time=12.089..12.356 rows=15000.00 loops=1)
+               Output: h.hospital_id, h.hospital_name, dr.report_id, drl.case_count
+               Sort Key: h.hospital_id, dr.report_id
+               Sort Method: quicksort  Memory: 1322kB
+               Buffers: shared hit=227
+               ->  Hash Right Join  (cost=166.62..569.75 rows=15000 width=44) (actual time=0.482..3.301 rows=15000.00 loops=1)
+                     Output: h.hospital_id, h.hospital_name, dr.report_id, drl.case_count
+                     Inner Unique: true
+                     Hash Cond: (dr.hospital_id = h.hospital_id)
+                     Buffers: shared hit=224
+                     ->  Hash Right Join  (cost=163.50..523.91 rows=15000 width=23) (actual time=0.468..2.262 rows=15000.00 loops=1)
+                           Output: dr.report_id, dr.hospital_id, drl.case_count
+                           Inner Unique: true
+                           Hash Cond: (drl.report_id = dr.report_id)
+                           Buffers: shared hit=222
+                           ->  Seq Scan on public.disease_report_lines drl  (cost=0.00..321.00 rows=15000 width=14) (actual time=0.003..0.439 rows=15000.00 loops=1)
+                                 Output: drl.report_id, drl.line_no, drl.disease_id, drl.area_id, drl.report_date, drl.age_group, drl.case_classification, drl.case_count
+                                 Buffers: shared hit=171
+                           ->  Hash  (cost=101.00..101.00 rows=5000 width=19) (actual time=0.458..0.459 rows=5000.00 loops=1)
+                                 Output: dr.report_id, dr.hospital_id
+                                 Buckets: 8192  Batches: 1  Memory Usage: 314kB
+                                 Buffers: shared hit=51
+                                 ->  Seq Scan on public.disease_reports dr  (cost=0.00..101.00 rows=5000 width=19) (actual time=0.002..0.213 rows=5000.00 loops=1)
+                                       Output: dr.report_id, dr.hospital_id
+                                       Buffers: shared hit=51
+                     ->  Hash  (cost=2.50..2.50 rows=50 width=30) (actual time=0.010..0.010 rows=50.00 loops=1)
+                           Output: h.hospital_id, h.hospital_name
+                           Buckets: 1024  Batches: 1  Memory Usage: 12kB
+                           Buffers: shared hit=2
+                           ->  Seq Scan on public.hospitals h  (cost=0.00..2.50 rows=50 width=30) (actual time=0.003..0.005 rows=50.00 loops=1)
+                                 Output: h.hospital_id, h.hospital_name
+                                 Buffers: shared hit=2
+ Planning:
+   Buffers: shared hit=208
+ Planning Time: 0.490 ms
+ Execution Time: 13.111 ms
+(45 rows)
+

@@ -1,0 +1,30 @@
+                                                                              QUERY PLAN                                                                               
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Sort  (cost=367.32..367.60 rows=111 width=45) (actual time=0.841..0.844 rows=128.00 loops=1)
+   Output: a.area_id, a.area_name, wo.observed_at, wo.humidity_percent, wo.rainfall_mm
+   Sort Key: wo.rainfall_mm DESC, wo.humidity_percent DESC
+   Sort Method: quicksort  Memory: 34kB
+   Buffers: shared hit=139
+   ->  Hash Join  (cost=4.25..363.55 rows=111 width=45) (actual time=0.027..0.774 rows=128.00 loops=1)
+         Output: a.area_id, a.area_name, wo.observed_at, wo.humidity_percent, wo.rainfall_mm
+         Inner Unique: true
+         Hash Cond: (wo.area_id = a.area_id)
+         Buffers: shared hit=136
+         ->  Seq Scan on public.weather_observations wo  (cost=0.00..359.00 rows=111 width=28) (actual time=0.011..0.746 rows=128.00 loops=1)
+               Output: wo.weather_id, wo.area_id, wo.observed_at, wo.temperature_c, wo.humidity_percent, wo.rainfall_mm, wo.source
+               Filter: ((wo.humidity_percent >= '70'::numeric) AND (wo.rainfall_mm >= '10'::numeric) AND (wo.observed_at >= (CURRENT_TIMESTAMP - '7 days'::interval)))
+               Rows Removed by Filter: 9872
+               Buffers: shared hit=134
+         ->  Hash  (cost=3.00..3.00 rows=100 width=27) (actual time=0.012..0.013 rows=100.00 loops=1)
+               Output: a.area_id, a.area_name
+               Buckets: 1024  Batches: 1  Memory Usage: 14kB
+               Buffers: shared hit=2
+               ->  Seq Scan on public.areas a  (cost=0.00..3.00 rows=100 width=27) (actual time=0.001..0.005 rows=100.00 loops=1)
+                     Output: a.area_id, a.area_name
+                     Buffers: shared hit=2
+ Planning:
+   Buffers: shared hit=215
+ Planning Time: 0.336 ms
+ Execution Time: 0.861 ms
+(26 rows)
+

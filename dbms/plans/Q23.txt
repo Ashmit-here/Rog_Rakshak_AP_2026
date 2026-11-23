@@ -1,0 +1,64 @@
+                                                                                                    QUERY PLAN                                                                                                    
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Sort  (cost=10942131.59..10942131.84 rows=100 width=61) (actual time=10749.404..10749.737 rows=20000.00 loops=1)
+   Output: d.disease_name, a.area_name, rp.risk_score, rp.risk_level, (rank() OVER w1), rp.disease_id
+   Sort Key: d.disease_name, (rank() OVER w1)
+   Sort Method: quicksort  Memory: 2386kB
+   Buffers: shared hit=4940260
+   ->  WindowAgg  (cost=1463509.38..10942128.26 rows=100 width=61) (actual time=10696.022..10747.362 rows=20000.00 loops=1)
+         Output: d.disease_name, a.area_name, rp.risk_score, rp.risk_level, rank() OVER w1, rp.disease_id
+         Window: w1 AS (PARTITION BY rp.disease_id ORDER BY rp.risk_score ROWS UNBOUNDED PRECEDING)
+         Storage: Memory  Maximum Storage: 17kB
+         Buffers: shared hit=4940254
+         ->  Incremental Sort  (cost=1367765.75..10942126.51 rows=100 width=53) (actual time=10696.013..10744.111 rows=20000.00 loops=1)
+               Output: rp.risk_score, rp.disease_id, d.disease_name, a.area_name, rp.risk_level
+               Sort Key: rp.disease_id, rp.risk_score DESC
+               Presorted Key: rp.disease_id
+               Full-sort Groups: 8  Sort Method: quicksort  Average Memory: 29kB  Peak Memory: 29kB
+               Pre-sorted Groups: 8  Sort Method: quicksort  Average Memory: 279kB  Peak Memory: 279kB
+               Buffers: shared hit=4940254
+               ->  Nested Loop  (cost=0.13..10942123.28 rows=100 width=53) (actual time=0.747..10740.807 rows=20000.00 loops=1)
+                     Output: rp.risk_score, rp.disease_id, d.disease_name, a.area_name, rp.risk_level
+                     Inner Unique: true
+                     Join Filter: (a.area_id = rp.area_id)
+                     Rows Removed by Join Filter: 990000
+                     Buffers: shared hit=4940251
+                     ->  Nested Loop  (cost=0.13..10941971.50 rows=100 width=46) (actual time=0.743..10696.307 rows=20000.00 loops=1)
+                           Output: rp.risk_score, rp.risk_level, rp.disease_id, rp.area_id, d.disease_name
+                           Join Filter: (d.disease_id = rp.disease_id)
+                           Rows Removed by Join Filter: 140000
+                           Buffers: shared hit=4940249
+                           ->  Index Scan using diseases_pkey on public.diseases d  (cost=0.13..12.25 rows=8 width=27) (actual time=0.001..0.007 rows=8.00 loops=1)
+                                 Output: d.disease_id, d.disease_name, d.pathogen_type, d.vector_type
+                                 Index Searches: 1
+                                 Buffers: shared hit=2
+                           ->  Materialize  (cost=0.00..10941947.50 rows=100 width=26) (actual time=0.093..1336.354 rows=20000.00 loops=8)
+                                 Output: rp.risk_score, rp.risk_level, rp.disease_id, rp.area_id
+                                 Storage: Memory  Maximum Storage: 1349kB
+                                 Buffers: shared hit=4940247
+                                 ->  Seq Scan on public.risk_predictions rp  (cost=0.00..10941947.00 rows=100 width=26) (actual time=0.741..10685.676 rows=20000.00 loops=1)
+                                       Output: rp.risk_score, rp.risk_level, rp.disease_id, rp.area_id
+                                       Filter: (rp.generated_at = (SubPlan 1))
+                                       Buffers: shared hit=4940247
+                                       SubPlan 1
+                                         ->  Aggregate  (cost=547.06..547.07 rows=1 width=8) (actual time=0.534..0.534 rows=1.00 loops=20000)
+                                               Output: max(rp2.generated_at)
+                                               Buffers: shared hit=4940000
+                                               ->  Seq Scan on public.risk_predictions rp2  (cost=0.00..547.00 rows=25 width=8) (actual time=0.011..0.533 rows=25.00 loops=20000)
+                                                     Output: rp2.prediction_id, rp2.area_id, rp2.disease_id, rp2.model_id, rp2.generated_at, rp2.forecast_start, rp2.forecast_end, rp2.risk_score, rp2.risk_level
+                                                     Filter: ((rp2.area_id = rp.area_id) AND (rp2.disease_id = rp.disease_id))
+                                                     Rows Removed by Filter: 19975
+                                                     Buffers: shared hit=4940000
+                     ->  Materialize  (cost=0.00..3.50 rows=100 width=27) (actual time=0.000..0.001 rows=50.50 loops=20000)
+                           Output: a.area_name, a.area_id
+                           Storage: Memory  Maximum Storage: 22kB
+                           Buffers: shared hit=2
+                           ->  Seq Scan on public.areas a  (cost=0.00..3.00 rows=100 width=27) (actual time=0.002..0.014 rows=100.00 loops=1)
+                                 Output: a.area_name, a.area_id
+                                 Buffers: shared hit=2
+ Planning:
+   Buffers: shared hit=197
+ Planning Time: 0.379 ms
+ Execution Time: 10750.690 ms
+(60 rows)
+

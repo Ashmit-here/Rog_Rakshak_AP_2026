@@ -1,0 +1,33 @@
+                                                                                                    QUERY PLAN                                                                                                    
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Sort  (cost=570.11..570.13 rows=8 width=43) (actual time=3.324..3.325 rows=8.00 loops=1)
+   Output: d.disease_name, (sum(drl.case_count) FILTER (WHERE (drl.case_classification = 'SUSPECTED'::text))), (sum(drl.case_count) FILTER (WHERE (drl.case_classification = 'CONFIRMED'::text))), d.disease_id
+   Sort Key: (sum(drl.case_count) FILTER (WHERE (drl.case_classification = 'CONFIRMED'::text))) DESC NULLS LAST
+   Sort Method: quicksort  Memory: 25kB
+   Buffers: shared hit=175
+   ->  HashAggregate  (cost=569.91..569.99 rows=8 width=43) (actual time=3.315..3.316 rows=8.00 loops=1)
+         Output: d.disease_name, sum(drl.case_count) FILTER (WHERE (drl.case_classification = 'SUSPECTED'::text)), sum(drl.case_count) FILTER (WHERE (drl.case_classification = 'CONFIRMED'::text)), d.disease_id
+         Group Key: d.disease_id
+         Batches: 1  Memory Usage: 32kB
+         Buffers: shared hit=172
+         ->  Hash Join  (cost=1.18..382.41 rows=15000 width=41) (actual time=0.015..2.038 rows=15000.00 loops=1)
+               Output: d.disease_id, d.disease_name, drl.case_count, drl.case_classification
+               Inner Unique: true
+               Hash Cond: (drl.disease_id = d.disease_id)
+               Buffers: shared hit=172
+               ->  Seq Scan on public.disease_report_lines drl  (cost=0.00..321.00 rows=15000 width=21) (actual time=0.003..0.652 rows=15000.00 loops=1)
+                     Output: drl.report_id, drl.line_no, drl.disease_id, drl.area_id, drl.report_date, drl.age_group, drl.case_classification, drl.case_count
+                     Buffers: shared hit=171
+               ->  Hash  (cost=1.08..1.08 rows=8 width=27) (actual time=0.005..0.006 rows=8.00 loops=1)
+                     Output: d.disease_name, d.disease_id
+                     Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                     Buffers: shared hit=1
+                     ->  Seq Scan on public.diseases d  (cost=0.00..1.08 rows=8 width=27) (actual time=0.002..0.002 rows=8.00 loops=1)
+                           Output: d.disease_name, d.disease_id
+                           Buffers: shared hit=1
+ Planning:
+   Buffers: shared hit=141
+ Planning Time: 0.301 ms
+ Execution Time: 3.366 ms
+(29 rows)
+

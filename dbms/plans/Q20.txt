@@ -1,0 +1,41 @@
+                                                                     QUERY PLAN                                                                     
+----------------------------------------------------------------------------------------------------------------------------------------------------
+ Sort  (cost=83.22..85.25 rows=813 width=98) (actual time=0.310..0.327 rows=1000.00 loops=1)
+   Output: pn.notification_id, pn.title, d.disease_name, a.area_name, pn.published_at, pn.expires_at
+   Sort Key: pn.published_at DESC
+   Sort Method: quicksort  Memory: 140kB
+   Buffers: shared hit=19
+   ->  Hash Join  (cost=5.43..43.92 rows=813 width=98) (actual time=0.024..0.212 rows=1000.00 loops=1)
+         Output: pn.notification_id, pn.title, d.disease_name, a.area_name, pn.published_at, pn.expires_at
+         Inner Unique: true
+         Hash Cond: (pn.area_id = a.area_id)
+         Buffers: shared hit=16
+         ->  Hash Join  (cost=1.18..37.45 rows=813 width=91) (actual time=0.011..0.134 rows=1000.00 loops=1)
+               Output: pn.notification_id, pn.title, pn.published_at, pn.expires_at, pn.area_id, d.disease_name
+               Inner Unique: true
+               Hash Cond: (pn.disease_id = d.disease_id)
+               Buffers: shared hit=14
+               ->  Seq Scan on public.public_notifications pn  (cost=0.00..33.00 rows=813 width=78) (actual time=0.003..0.061 rows=1000.00 loops=1)
+                     Output: pn.notification_id, pn.area_id, pn.disease_id, pn.title, pn.published_at, pn.expires_at
+                     Filter: ((pn.published_at <= CURRENT_TIMESTAMP) AND ((pn.expires_at IS NULL) OR (pn.expires_at >= CURRENT_TIMESTAMP)))
+                     Buffers: shared hit=13
+               ->  Hash  (cost=1.08..1.08 rows=8 width=27) (actual time=0.005..0.005 rows=8.00 loops=1)
+                     Output: d.disease_name, d.disease_id
+                     Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                     Buffers: shared hit=1
+                     ->  Seq Scan on public.diseases d  (cost=0.00..1.08 rows=8 width=27) (actual time=0.001..0.001 rows=8.00 loops=1)
+                           Output: d.disease_name, d.disease_id
+                           Buffers: shared hit=1
+         ->  Hash  (cost=3.00..3.00 rows=100 width=27) (actual time=0.010..0.010 rows=100.00 loops=1)
+               Output: a.area_name, a.area_id
+               Buckets: 1024  Batches: 1  Memory Usage: 14kB
+               Buffers: shared hit=2
+               ->  Seq Scan on public.areas a  (cost=0.00..3.00 rows=100 width=27) (actual time=0.001..0.005 rows=100.00 loops=1)
+                     Output: a.area_name, a.area_id
+                     Buffers: shared hit=2
+ Planning:
+   Buffers: shared hit=259 dirtied=1
+ Planning Time: 0.413 ms
+ Execution Time: 0.362 ms
+(37 rows)
+

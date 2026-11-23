@@ -1,0 +1,27 @@
+                                                                  QUERY PLAN                                                                  
+----------------------------------------------------------------------------------------------------------------------------------------------
+ Sort  (cost=2.27..2.28 rows=2 width=27) (actual time=0.022..0.022 rows=2.00 loops=1)
+   Output: d.disease_id, d.disease_name
+   Sort Key: d.disease_name
+   Sort Method: quicksort  Memory: 25kB
+   Buffers: shared hit=5
+   ->  Hash Anti Join  (cost=1.14..2.26 rows=2 width=27) (actual time=0.011..0.011 rows=2.00 loops=1)
+         Output: d.disease_id, d.disease_name
+         Hash Cond: (d.disease_id = pg.disease_id)
+         Buffers: shared hit=2
+         ->  Seq Scan on public.diseases d  (cost=0.00..1.08 rows=8 width=27) (actual time=0.001..0.002 rows=8.00 loops=1)
+               Output: d.disease_id, d.disease_name, d.pathogen_type, d.vector_type
+               Buffers: shared hit=1
+         ->  Hash  (cost=1.06..1.06 rows=6 width=7) (actual time=0.006..0.006 rows=6.00 loops=1)
+               Output: pg.disease_id
+               Buckets: 1024  Batches: 1  Memory Usage: 9kB
+               Buffers: shared hit=1
+               ->  Seq Scan on public.prevention_guidelines pg  (cost=0.00..1.06 rows=6 width=7) (actual time=0.002..0.003 rows=6.00 loops=1)
+                     Output: pg.disease_id
+                     Buffers: shared hit=1
+ Planning:
+   Buffers: shared hit=110
+ Planning Time: 0.225 ms
+ Execution Time: 0.040 ms
+(23 rows)
+

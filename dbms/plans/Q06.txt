@@ -1,0 +1,33 @@
+                                                                          QUERY PLAN                                                                          
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Sort  (cost=798.97..809.77 rows=4320 width=32) (actual time=3.673..3.696 rows=1080.00 loops=1)
+   Output: drl.report_date, d.disease_name, (sum(drl.case_count))
+   Sort Key: drl.report_date DESC, (sum(drl.case_count)) DESC
+   Sort Method: quicksort  Memory: 99kB
+   Buffers: shared hit=178
+   ->  HashAggregate  (cost=494.91..538.11 rows=4320 width=32) (actual time=3.465..3.539 rows=1080.00 loops=1)
+         Output: drl.report_date, d.disease_name, sum(drl.case_count)
+         Group Key: drl.report_date, d.disease_name
+         Batches: 1  Memory Usage: 217kB
+         Buffers: shared hit=172
+         ->  Hash Join  (cost=1.18..382.41 rows=15000 width=28) (actual time=0.017..2.241 rows=15000.00 loops=1)
+               Output: drl.report_date, d.disease_name, drl.case_count
+               Inner Unique: true
+               Hash Cond: (drl.disease_id = d.disease_id)
+               Buffers: shared hit=172
+               ->  Seq Scan on public.disease_report_lines drl  (cost=0.00..321.00 rows=15000 width=15) (actual time=0.005..0.713 rows=15000.00 loops=1)
+                     Output: drl.report_id, drl.line_no, drl.disease_id, drl.area_id, drl.report_date, drl.age_group, drl.case_classification, drl.case_count
+                     Buffers: shared hit=171
+               ->  Hash  (cost=1.08..1.08 rows=8 width=27) (actual time=0.006..0.006 rows=8.00 loops=1)
+                     Output: d.disease_name, d.disease_id
+                     Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                     Buffers: shared hit=1
+                     ->  Seq Scan on public.diseases d  (cost=0.00..1.08 rows=8 width=27) (actual time=0.002..0.002 rows=8.00 loops=1)
+                           Output: d.disease_name, d.disease_id
+                           Buffers: shared hit=1
+ Planning:
+   Buffers: shared hit=154
+ Planning Time: 0.332 ms
+ Execution Time: 3.770 ms
+(29 rows)
+
